@@ -7,13 +7,14 @@
 void canbus_setup();
 
 // reads a frame. Returns whether or not there is a frame to read
-bool canbus_read(can2040_msg *msg);
+bool canbus_read(struct can2040_msg *msg);
 
 // sends a float over CAN
 int canbus_transmit_float(uint32_t id, float value); // TODO: should all return values for success be a bool or int?
 
 // parses can frame as a float. (assumes data is sent as little endian)
-float can_read_float(can2040_msg msg); // TODO: add can2040_msg type
+float can_read_float(struct can2040_msg msg);
+int can_read_int(struct can2040_msg msg);
 
 // sets up a pin for PWM and gives it an initial signal of 1500 microseconds.
 void add_pwm_pin(uint pin_num);
