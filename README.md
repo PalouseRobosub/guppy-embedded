@@ -10,17 +10,26 @@ Home to the embedded PCB code that runs Guppy: [Palouse RoboSub](https://robosub
 
 Currently, the CAN base code comes from [KevinOConnor/can2040](https://github.com/KevinOConnor/can2040).
 
-> [!CAUTION]
-> Active work in progress! The code is unfinished and untested.
-
 ## Setup
-Ensure you have a RP Pico SDK environment set up.
+1. Ensure you have a RP Pico SDK environment set up.
+2. Clone this repo.
+3. `cd` into `example/` dir.
+4. make and enter a build dir: `mkdir build` and `cd build`
+5. Generate build files: `cmake ..`
+6. Compile: `make`
+7. Upload the `.uf2` file onto the microcontroller.
 
 ## Organization
 Work in progress...
 
 ## Contributing
-Work in progress...
+To contribute code:
+
+1. Make a new branch with the format `name/feature_name` such as `adrian/add_status_led` and make all changes in that branch.
+2. Make a Pull Request to the `main` branch and request `@guppyadrian` as a reviewer.
+3. Make sure all commits have proper messages starting with `feat:`, `chore:`, or `fix:`
+4. Document and comment all of your code!
+5. Ensure your code works before merging into main!
 
 ## Contact and Sponsorship
 Need to get in touch? Reach out to `robosub.vcea@wsu.edu`.
