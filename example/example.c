@@ -1,4 +1,4 @@
-// This is the main program going on the Guppy microcontrollers
+// This is an example program used to test PWM and CAN communication
 //
 // This code listens to id 0x101 for float values, echoes the can frame on id 0x102, and outputs analog output on pin 20
 
@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../src/guppylib.h"
+#include "../lib/guppy_lib.h"
 
 #define PWM_PIN 20
 

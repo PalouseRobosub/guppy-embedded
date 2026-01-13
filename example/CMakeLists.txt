@@ -21,9 +21,9 @@ project(can2040_example)
 pico_sdk_init()
 
 add_executable(canexample
-    main.c
+    example.c
     ../src/can2040.c
-    ../src/guppylib.c
+    ../src/guppy_lib.c
 )
 
 pico_set_binary_type(canexample copy_to_ram)
