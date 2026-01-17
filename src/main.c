@@ -36,3 +36,8 @@ int main(void)
         }
     }
 }
+
+
+switch()
+    case a:
+        init_and_go(init_fn, loop_fn)
