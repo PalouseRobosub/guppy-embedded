@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../lib/guppy_lib.h"
+#include "../src/guppy_lib.h"
 
 #define PWM_PIN 20
 

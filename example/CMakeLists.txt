@@ -14,7 +14,7 @@ cmake_minimum_required(VERSION 3.13)
 # Download SDK from git (or "cmake -D PICO_SDK_PATH=/some/path ..." to avoid)
 set(PICO_SDK_FETCH_FROM_GIT on)
 
-include(pico_sdk_import.cmake)
+include(../pico_sdk_import.cmake)
 pico_sdk_init()
 
 # Add can2040 lib
@@ -44,7 +44,7 @@ project(can2040_example)
 
 add_executable(canexample
     example.c
-    ../lib/guppy_lib.c
+    ../src/guppy_lib.c
 )
 
 pico_set_binary_type(canexample copy_to_ram)
