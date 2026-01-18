@@ -1,0 +1,4 @@
+{
+  "name": "Guppy Embedded",
+  "dockerFile": "Dockerfile",
+}
