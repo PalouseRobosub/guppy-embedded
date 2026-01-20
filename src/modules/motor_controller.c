@@ -1,5 +1,7 @@
 #include "motor_controller.h"
 #include "can2040.h"
+#include "../guppy_lib.h"
+#include "pico/stdlib.h"
 
 #define PWM_PIN 20
 
@@ -19,6 +21,7 @@ void run_motor_controller()
             float value = can_read_float(msg);
             int us = throttle_to_pwm_us(value);
             printf("pwm level (should be from 1100 to 1900): %d\n", us);
+            printf("recieved float: %f\n", value);
 
             pwm_write(PWM_PIN, us);
 
