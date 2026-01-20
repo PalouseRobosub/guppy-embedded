@@ -5,6 +5,7 @@ set(PICO_SDK_FETCH_FROM_GIT on)
 include(pico_sdk_import.cmake)
 
 project(guppy_embed)
+set(CMAKE_CXX_STANDARD 14)
 
 pico_sdk_init()
 
@@ -36,8 +37,9 @@ file(GLOB MODULE_SOURCES src/modules/*.c)
 
 # The project
 add_executable(guppy_embedded
-    src/main.c
+    src/main.cpp
     src/guppy_lib.c
+    #src/barometer.cpp
     ${MODULE_SOURCES}
 )
 
