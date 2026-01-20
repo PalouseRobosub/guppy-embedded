@@ -1,8 +1,7 @@
-#include "pico/stdlib.h"
 #include "hardware/pwm.h"
 #include <string.h>
 
-#include "guppylib.h"
+#include "guppy_lib.h"
 
 /* ---------------CAN stuff--------------- */
 

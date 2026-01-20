@@ -1,6 +1,7 @@
 #ifndef _GUPPY_LIB_H
 #define _GUPPY_LIB_H
 
+#include "pico/stdlib.h"
 #include "can2040.h"
 
 // set up the can bus. TODO: add parameter support? shouldn't it all be the same?
