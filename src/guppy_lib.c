@@ -84,6 +84,19 @@ int canbus_transmit_float(uint32_t id, float value)
     return sts;
 }
 
+int canbus_transmit_int(uint32_t id, int value)
+{
+    struct can2040_msg tmsg;
+    tmsg.id = id; // TODO: isn't id 11 bits, why does this take 32bit?
+    tmsg.dlc = sizeof(int);
+    uint32_t data;
+    memcpy(&data, &value, sizeof(int));
+    tmsg.data32[0] = data;
+    int sts = can2040_transmit(&cbus, &tmsg);
+
+    return sts;
+}
+
 float can_read_float(struct can2040_msg msg) // TODO: is it possible to have a type generic for what to parse to?
 {                                            // second TODO: make this memory safe?
     float value;
@@ -98,6 +111,19 @@ int can_read_int(struct can2040_msg msg)
     memcpy(&value, msg.data, sizeof(int));
 
     return value;
+}
+
+static int last_heartbeat_time = 0;
+
+void do_heartbeat()
+{
+    int cur_time = to_ms_since_boot(get_absolute_time());
+    
+    if (cur_time - last_heartbeat_time > MS_BETWEEN_HEARTBEATS)
+    {
+        last_heartbeat_time = cur_time;
+        canbus_transmit_int(0x103, cur_time);
+    }
 }
 
 /* ---------------PWM stuff--------------- */

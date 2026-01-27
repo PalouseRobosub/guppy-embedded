@@ -7,11 +7,12 @@
 
 void run_motor_controller()
 {
-
     add_pwm_pin(PWM_PIN);
 
     while (1)
     {
+        do_heartbeat();
+
         struct can2040_msg msg = { 0 };
         if (canbus_read(&msg)) // returns true if has message. Sets the &msg to the message
         {
