@@ -21,7 +21,7 @@ float can_read_float(struct can2040_msg msg);
 int can_read_int(struct can2040_msg msg);
 
 // handles heartbeat code
-void do_heartbeat();
+void do_heartbeat(uint32_t id);
 
 // sets up a pin for PWM and gives it an initial signal of 1500 microseconds.
 void add_pwm_pin(uint pin_num);

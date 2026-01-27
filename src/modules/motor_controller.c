@@ -11,7 +11,7 @@ void run_motor_controller()
 
     while (1)
     {
-        do_heartbeat();
+        do_heartbeat(0x010);
 
         struct can2040_msg msg = { 0 };
         if (canbus_read(&msg)) // returns true if has message. Sets the &msg to the message

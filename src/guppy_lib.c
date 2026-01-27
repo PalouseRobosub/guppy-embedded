@@ -115,14 +115,14 @@ int can_read_int(struct can2040_msg msg)
 
 static int last_heartbeat_time = 0;
 
-void do_heartbeat()
+void do_heartbeat(uint32_t id)
 {
     int cur_time = to_ms_since_boot(get_absolute_time());
     
     if (cur_time - last_heartbeat_time > MS_BETWEEN_HEARTBEATS)
     {
         last_heartbeat_time = cur_time;
-        canbus_transmit_int(0x103, cur_time);
+        canbus_transmit_int(id, cur_time);
     }
 }
 
