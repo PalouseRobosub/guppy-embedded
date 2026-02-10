@@ -6,6 +6,7 @@ extern "C" {
 
 #include "guppy_lib.h"
 #include "modules/motor_controller.h"
+#include "modules/barometer_sensor.h"
 }
 
 int main(void)
@@ -19,6 +20,9 @@ int main(void)
     {
         case 0: // TODO: should be enum?
             run_motor_controller();
+            break;
+        case 1:
+            run_barometer_sensor();
             break;
     }
 }

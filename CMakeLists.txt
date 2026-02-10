@@ -33,7 +33,11 @@ target_link_libraries(can2040
 )
 
 # add stuff from modules folder
-file(GLOB MODULE_SOURCES src/modules/*.c)
+file(GLOB MODULE_SOURCES
+    src/modules/*.c
+    src/modules/*.cpp
+)
+
 
 # The project
 add_executable(guppy_embedded
