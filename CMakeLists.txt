@@ -5,7 +5,7 @@ set(PICO_SDK_FETCH_FROM_GIT on)
 include(pico_sdk_import.cmake)
 
 project(guppy_embed)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_C_STANDARD 11)
 
 pico_sdk_init()
 
@@ -39,7 +39,7 @@ file(GLOB MODULE_SOURCES src/modules/*.c)
 add_executable(guppy_embedded
     src/main.cpp
     src/guppy_lib.c
-    #src/barometer.cpp
+    src/barometer.cpp
     ${MODULE_SOURCES}
 )
 
@@ -47,6 +47,7 @@ pico_set_binary_type(guppy_embedded copy_to_ram)
 target_link_libraries(guppy_embedded
     pico_stdlib
     hardware_pwm
+    hardware_i2c
     can2040
 )
 

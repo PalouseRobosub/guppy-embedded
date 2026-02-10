@@ -39,6 +39,7 @@ THE SOFTWARE.
 
 extern "C" {
     #include "pico/stdlib.h"
+	#include "hardware/i2c.h"
 }
 
 class MS5837 {
@@ -53,8 +54,8 @@ public:
 
 	MS5837();
 
-	bool init(TwoWire &wirePort = Wire);
-	bool begin(TwoWire &wirePort = Wire); // Calls init()
+	bool init(i2c_inst_t *i2c_port);
+	bool begin(i2c_inst_t *i2c_port); // Calls init()
 
 	/** Set model of MS5837 sensor. Valid options are MS5837::MS5837_30BA (default)
 	 * and MS5837::MS5837_02BA.
@@ -91,7 +92,7 @@ public:
 private:
 
 	//This stores the requested i2c port
-	TwoWire * _i2cPort;
+	i2c_inst_t *_i2c;
 
 	uint16_t C[8];
 	uint32_t D1_pres, D2_temp;
