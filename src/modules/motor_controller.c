@@ -4,9 +4,9 @@
 #include "pico/stdlib.h"
 #include <stdio.h>
 
-// TODO: temp pin numbers
-static const uint8_t pins[8] = { 20, 21, 22, 23, 24, 25, 26, 27 };
-const uint16_t motor_board_id = 0x410;
+// TODO: untested pin numbers
+static const uint8_t pins[8] = { 16, 17, 18, 19, 20, 25, 26, 27 };
+static const uint16_t motor_board_id = 0x410;
 
 
 void run_motor_controller()
@@ -28,14 +28,19 @@ void run_motor_controller()
                 int micro_seconds = throttle_to_pwm_us(value);
 
                 // NDEBUG should be added by CMAKE on release builds
-                #ifdef NDEBUG
+                #ifndef NDEBUG
+                    printf("received motor power for id %x\n", msg.id);
                     printf("pwm level (should be from 1100 to 1900): %d\n", micro_seconds);
                     printf("recieved float: %f\n", value);
                 #endif
 
                 pwm_write(pins[msg.id - motor_board_id], micro_seconds);
+
+                // tech debt: 0x102 is a temp test id
+                #ifndef NDEBUG
+                    canbus_transmit_float(0x102, value); // echo the value
+                #endif
             }
-            // canbus_transmit_float(0x102, value); // echo the value
         }
     }
 }
