@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 #include "barometer.h"
 #include <math.h>
+#include <iostream>
 
 const uint8_t MS5837_ADDR = 0x76;
 const uint8_t MS5837_RESET = 0x1E;
