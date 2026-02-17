@@ -31,13 +31,15 @@ void run_barometer_sensor()
     gpio_set_function(PICO_I2C_SDA_PIN, GPIO_FUNC_I2C);
     gpio_set_function(PICO_I2C_SCL_PIN, GPIO_FUNC_I2C);
     gpio_pull_up(PICO_I2C_SDA_PIN);
-    gpio_pull_up(PICO_I2C_SCL_PIN);
+    gpio_pull_up(PICO_I2C_SCL_PIN); // TODO: do I need these? there is external pull up!
 
     // init switches
     gpio_init(SWITCH_PIN_ONE);
     gpio_init(SWITCH_PIN_TWO);
     gpio_set_dir(SWITCH_PIN_ONE, GPIO_IN);
     gpio_set_dir(SWITCH_PIN_TWO, GPIO_IN);
+    gpio_pull_down(SWITCH_PIN_ONE);
+    gpio_pull_down(SWITCH_PIN_TWO);
 
     // make available for picotool
     //bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C));
