@@ -7,6 +7,7 @@ extern "C" {
 #include "../guppy_lib.h"
 }
 #include <iostream>
+#include "Adafruit_NeoPixel.hpp"
 
 #define PICO_I2C_INSTANCE   i2c0
 #define PICO_I2C_SDA_PIN    16
@@ -15,8 +16,16 @@ extern "C" {
 #define SWITCH_PIN_ONE      18
 #define SWITCH_PIN_TWO      19 
 
+#define LEDS_PIN            20
+#define NUM_LEDS            10
+
 void run_barometer_sensor()
 {
+    Adafruit_NeoPixel ledStrip(10, LEDS_PIN, NEO_GRB + NEO_KHZ800);
+    ledStrip.begin();
+
+    
+
     // #if !defined(i2c_default) || !defined(PICO_DEFAULT_I2C_SDA_PIN) || !defined(PICO_DEFAULT_I2C_SCL_PIN)
     // #warning You need a board with i2c pins! Cant run the barometer module
     // return;

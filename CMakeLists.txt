@@ -7,6 +7,8 @@ include(pico_sdk_import.cmake)
 project(guppy_embed)
 set(CMAKE_C_STANDARD 11)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 pico_sdk_init()
 
 # Add can2040 lib
@@ -32,6 +34,9 @@ target_link_libraries(can2040
     hardware_pio
 )
 
+# add neopixels
+add_subdirectory(./src/pico_neopixels build)
+
 # add stuff from modules folder
 file(GLOB MODULE_SOURCES
     src/modules/*.c
@@ -53,6 +58,8 @@ target_link_libraries(guppy_embedded
     hardware_pwm
     hardware_i2c
     can2040
+    pico_neopixel
+    pico_rand # TODO: remember to remove this!
 )
 
 

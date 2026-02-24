@@ -5,14 +5,43 @@ extern "C" {
 #include "pico/stdlib.h"
 #include "guppy_lib.h"
 #include "modules/motor_controller.h"
+#include "pico/rand.h"
 }
 #include "modules/barometer_sensor.h"
 #include <iostream>
+#include "Adafruit_NeoPixel.hpp"
+
 
 int main(void)
 {
+
+    Adafruit_NeoPixel ledStrip(100, 16, NEO_GRB + NEO_KHZ800);
+    ledStrip.begin();
+    
+
     stdio_init_all();
     canbus_setup();
+
+    int brightnesses[100] = { 0 };
+    int inc = 0;
+
+    while(1)
+    {
+        if (inc++ > 10)
+        {
+            inc = 0;
+            brightnesses[get_rand_32() % 100] = 100;
+        }
+
+        for (int i = 0; i < 100; i++)
+        {
+            ledStrip.setPixelColor(i, ledStrip.Color(brightnesses[i], 0, 0));
+            if (brightnesses[i] > 0) brightnesses[i]--;
+        }
+        ledStrip.show();
+
+        sleep_ms(10);
+    }
 
     sleep_ms(10000);
     std::cout << "Hello" << std::endl;
