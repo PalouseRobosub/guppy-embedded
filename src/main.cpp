@@ -8,35 +8,19 @@ extern "C" {
 #include "pico/rand.h"
 }
 #include "modules/barometer_sensor.h"
+#include "led.h"
 #include <iostream>
-#include "Adafruit_NeoPixel.hpp"
 
 #define NUM_LEDS 144
 
 int main(void)
 {
-
-
-
     stdio_init_all();
     canbus_setup();
 
-    Adafruit_NeoPixel ledStrip(NUM_LEDS, 19, NEO_GRB + NEO_KHZ800);
-    ledStrip.begin();
-    while(1)
-    {
-        for (int i = 0; i < NUM_LEDS; i++)
-        {
-            ledStrip.setPixelColor(i, ledStrip.Color(12, 0, 0));
-            ledStrip.show();
-            sleep_ms(10);
-        }
-    }
-
-    sleep_ms(10000);
-    std::cout << "Hello" << std::endl;
-
     const int module = 1; // identifier for the board
+
+    run_led_control();
 
     switch(module)
     {

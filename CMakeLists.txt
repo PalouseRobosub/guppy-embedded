@@ -49,6 +49,7 @@ add_executable(guppy_embedded
     src/main.cpp
     src/guppy_lib.c
     src/barometer.cpp
+    src/led.cpp
     ${MODULE_SOURCES}
 )
 
