@@ -5,7 +5,6 @@ extern "C" {
 #include "pico/stdlib.h"
 #include "guppy_lib.h"
 #include "modules/motor_controller.h"
-#include "pico/rand.h"
 }
 #include "modules/barometer_sensor.h"
 #include "led.hpp"

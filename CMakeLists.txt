@@ -35,7 +35,10 @@ target_link_libraries(can2040
 )
 
 # add neopixels
-add_subdirectory(./src/pico_neopixels build)
+add_subdirectory(lib/pico_neopixels)
+add_subdirectory(lib/led)
+add_subdirectory(lib/barometer)
+add_subdirectory(lib/guppy_lib)
 
 # add stuff from modules folder
 file(GLOB MODULE_SOURCES
@@ -47,20 +50,17 @@ file(GLOB MODULE_SOURCES
 # The project
 add_executable(guppy_embedded
     src/main.cpp
-    src/guppy_lib.c
-    src/barometer.cpp
-    src/led.cpp
     ${MODULE_SOURCES}
 )
 
 pico_set_binary_type(guppy_embedded copy_to_ram)
 target_link_libraries(guppy_embedded
     pico_stdlib
-    hardware_pwm
-    hardware_i2c
     can2040
+    guppy_lib
     pico_neopixel
-    pico_rand # TODO: remember to remove this!
+    led_strip
+    barometer
 )
 
 

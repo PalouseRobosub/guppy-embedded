@@ -1,6 +1,6 @@
 #include "motor_controller.h"
 #include "can2040.h"
-#include "../guppy_lib.h"
+#include "guppy_lib.h"
 #include "pico/stdlib.h"
 
 #define PWM_PIN 20

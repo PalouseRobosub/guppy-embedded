@@ -1,10 +1,10 @@
 #include "barometer_sensor.h"
-#include "../barometer.h"
+#include "barometer.h"
 
 extern "C" {
 #include "pico/stdlib.h"
 #include "can2040.h"
-#include "../guppy_lib.h"
+#include "guppy_lib.h"
 }
 #include <iostream>
 #include "Adafruit_NeoPixel.hpp"
