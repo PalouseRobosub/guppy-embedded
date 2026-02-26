@@ -8,6 +8,7 @@
 static const uint8_t pins[8] = { 16, 17, 18, 19, 20, 25, 26, 27 };
 static const uint16_t motor_board_id = 0x410;
 
+#define MOTOR_MULT 0.1
 
 void run_motor_controller()
 {
@@ -24,7 +25,7 @@ void run_motor_controller()
         {
             printf("Recieved frame\n");
             if (msg.id >= (motor_board_id+1) && msg.id <= (motor_board_id+8)) {
-                float value = can_read_float(msg);
+                float value = can_read_float(msg) * MOTOR_MULT;
                 int micro_seconds = throttle_to_pwm_us(value);
 
                 // NDEBUG should be added by CMAKE on release builds
