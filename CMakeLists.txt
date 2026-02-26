@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13)
 set(PICO_SDK_FETCH_FROM_GIT on)
 include(pico_sdk_import.cmake)
 
-project(guppy_embed)
+project(guppy_embedded)
 set(CMAKE_C_STANDARD 11)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -34,7 +34,7 @@ target_link_libraries(can2040
     hardware_pio
 )
 
-# add neopixels
+# add libraries
 add_subdirectory(lib/pico_neopixels)
 add_subdirectory(lib/led)
 add_subdirectory(lib/barometer)
@@ -47,14 +47,14 @@ file(GLOB MODULE_SOURCES
 )
 
 
-# The project
-add_executable(guppy_embedded
+# Motor Controller Board
+add_executable(board_motor
     src/main.cpp
     ${MODULE_SOURCES}
 )
 
-pico_set_binary_type(guppy_embedded copy_to_ram)
-target_link_libraries(guppy_embedded
+pico_set_binary_type(board_motor copy_to_ram)
+target_link_libraries(board_motor
     pico_stdlib
     can2040
     guppy_lib
@@ -63,8 +63,33 @@ target_link_libraries(guppy_embedded
     barometer
 )
 
+target_compile_definitions(board_motor PRIVATE BOARD_TYPE=1)
 
-pico_enable_stdio_usb(guppy_embedded 1)
-pico_enable_stdio_uart(guppy_embedded 0)
+pico_enable_stdio_usb(board_motor 1)
+pico_enable_stdio_uart(board_motor 0)
 
-pico_add_extra_outputs(guppy_embedded)
+pico_add_extra_outputs(board_motor)
+
+
+# Wet Board
+add_executable(board_wet
+    src/main.cpp
+    ${MODULE_SOURCES}
+)
+
+pico_set_binary_type(board_wet copy_to_ram) # TODO: look at this
+target_link_libraries(board_wet
+    pico_stdlib
+    can2040
+    guppy_lib
+    pico_neopixel
+    led_strip
+    barometer
+)
+
+target_compile_definitions(board_wet PRIVATE BOARD_TYPE=2)
+
+pico_enable_stdio_usb(board_wet 1)
+pico_enable_stdio_uart(board_wet 0)
+
+pico_add_extra_outputs(board_wet)

@@ -17,8 +17,6 @@ int main()
     stdio_init_all();
     canbus_setup();
 
-    const int module = -1; // identifier for the board
-
     LEDState led_strip = LEDState(20);
     while (true)
     {
@@ -30,15 +28,15 @@ int main()
         led_strip.state = (State) ((led_strip.state + 1) % 7);
     }
 
-    switch(module)
+    switch(BOARD_TYPE)
     {
-        case 0: // TODO: should be enum?
+        case 1: // TODO: should be enum?
             run_motor_controller();
             break;
-        case 1:
+        case 2:
             run_barometer_sensor();
             break;
-        case -1: // test
+        default: // test
             break;
     }
 }
