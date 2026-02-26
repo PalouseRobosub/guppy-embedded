@@ -8,19 +8,28 @@ extern "C" {
 #include "pico/rand.h"
 }
 #include "modules/barometer_sensor.h"
-#include "led.h"
+#include "led.hpp"
 #include <iostream>
 
 #define NUM_LEDS 144
 
-int main(void)
+int main()
 {
     stdio_init_all();
     canbus_setup();
 
-    const int module = 1; // identifier for the board
+    const int module = -1; // identifier for the board
 
-    run_led_control();
+    LEDState led_strip = LEDState(20);
+    while (true)
+    {
+        for (int i = 0; i < 10; ++i)
+        {
+            led_strip.tick();
+            sleep_ms(250);
+        }
+        led_strip.state = (State) ((led_strip.state + 1) % 7);
+    }
 
     switch(module)
     {
@@ -29,6 +38,8 @@ int main(void)
             break;
         case 1:
             run_barometer_sensor();
+            break;
+        case -1: // test
             break;
     }
 }
