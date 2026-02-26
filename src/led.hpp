@@ -4,7 +4,7 @@
 #include "Adafruit_NeoPixel.hpp"
 
 #define NUM_LEDS 144
-#define BRIGHTNESS 255 // brightness of pixels out of 255
+#define BRIGHTNESS 50 // brightness of pixels out of 255
 
 enum State {
     STARTUP = 0,

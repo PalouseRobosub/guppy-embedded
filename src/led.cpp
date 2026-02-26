@@ -11,9 +11,10 @@
 
 LEDState::LEDState(int pin)
 {
-    this->tick_count = 0;
-    this->led_strip = Adafruit_NeoPixel(NUM_LEDS, pin, NEO_GRB + NEO_KHZ800);
-    this->state = STARTUP;
+    tick_count = 0;
+    led_strip = Adafruit_NeoPixel(NUM_LEDS, pin, NEO_GRB + NEO_KHZ800);
+    led_strip.begin();
+    state = STARTUP;
 }
 
 void LEDState::two_color(uint32_t color1, uint32_t color2)
