@@ -26,6 +26,8 @@ void run_motor_controller()
             printf("Recieved frame\n");
             if (msg.id >= (motor_board_id+1) && msg.id <= (motor_board_id+8)) {
                 float value = can_read_float(msg) * MOTOR_MULT;
+                if (value > MOTOR_MULT) value = MOTOR_MULT;
+                if (value < -MOTOR_MULT) value = -MOTOR_MULT;
                 int micro_seconds = throttle_to_pwm_us(value);
 
                 // NDEBUG should be added by CMAKE on release builds
