@@ -4,8 +4,8 @@
 extern "C" {
 #include "pico/stdlib.h"
 #include "guppy_lib.h"
-#include "modules/board_motor.h"
 }
+#include "modules/board_motor.h"
 #include "modules/board_wet.h"
 #include "led.hpp"
 #include <iostream>

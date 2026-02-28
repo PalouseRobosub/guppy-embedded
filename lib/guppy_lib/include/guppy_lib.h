@@ -14,11 +14,11 @@ bool canbus_read(struct can2040_msg *msg);
 
 // sends a float over CAN
 int canbus_transmit_float(uint32_t id, float value); // TODO: should all return values for success be a bool or int?
-int canbus_transmit_int(uint32_t id, int value);
+int canbus_transmit_int(uint32_t id, int32_t value);
 
 // parses can frame as a float. (assumes data is sent as little endian)
 float can_read_float(struct can2040_msg msg);
-int can_read_int(struct can2040_msg msg);
+int32_t can_read_int(struct can2040_msg msg);
 
 // handles heartbeat code
 void do_heartbeat(uint32_t id);
