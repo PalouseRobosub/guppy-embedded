@@ -20,7 +20,7 @@ void board_motor_loop()
         add_pwm_pin(pwm_pins[i]);
     }
 
-    LEDState led_strip(led_pin);
+    LEDController led_strip(led_pin);
 
     while (true)
     {

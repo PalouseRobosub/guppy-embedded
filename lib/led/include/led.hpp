@@ -8,28 +8,31 @@ extern "C" {
 #include "Adafruit_NeoPixel.hpp"
 
 #define NUM_LEDS 144
-#define BRIGHTNESS 255 // brightness of pixels out of 255
-
-enum State {
-    STARTUP = 0,
-    HOLDING = 1,
-    NAV = 2,
-    TASK = 3,
-    TELEOP = 4,
-    DISABLED = 5,
-    FAULT = 6
-};
+#define BRIGHTNESS 50 // brightness of pixels out of 255
 
 
-class LEDState
+
+
+class LEDController
 {
 public:
+
+    enum class State {
+        STARTUP = 0,
+        HOLDING = 1,
+        NAV = 2,
+        TASK = 3,
+        TELEOP = 4,
+        DISABLED = 5,
+        FAULT = 6
+    };
+
     State state;
     /// `pin` is the gpio pin the LED line data is connected to
-    LEDState(int pin);
+    LEDController(int pin);
     /// Updates the LED strip
     void tick();
-    /// Updates LEDState based on the provided CAN message
+    /// Updates LEDController based on the provided CAN message
     /// (does care about CAN ID and will ignore messages from most IDs)
     void update(const struct can2040_msg& msg);
 private:

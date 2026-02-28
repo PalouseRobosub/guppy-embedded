@@ -53,6 +53,7 @@ const uint16_t MS5837_30BA_MIN_SENSITIVITY = 26000;
 MS5837::MS5837() {
 	fluidDensity = 1029;
 	_i2c = NULL;
+	_initialized = false;
 }
 
 bool MS5837::begin(i2c_inst_t *i2c_port) {
@@ -65,7 +66,10 @@ bool MS5837::init(i2c_inst_t *i2c_port) {
 
 	// Reset the MS5837, per datasheet
 	cmd = MS5837_RESET;
-	i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, false);
+	if (i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, false) == PICO_ERROR_GENERIC)
+	{
+		return false; // no device found
+	}
 
 	// Wait for reset to complete
 	sleep_ms(10);
@@ -75,7 +79,7 @@ bool MS5837::init(i2c_inst_t *i2c_port) {
 		cmd = MS5837_PROM_READ+i*2;
 		i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, true);
 
-		uint8_t buffer[2];
+		uint8_t buffer[2]{};
 		i2c_read_blocking(_i2c, MS5837_ADDR, buffer, 2, false);
 		C[i] = (uint16_t(buffer[0]) << 8) | buffer[1];
 	}
@@ -110,6 +114,7 @@ bool MS5837::init(i2c_inst_t *i2c_port) {
 	// the sensor version is unrecognised.
 	// (The MS5637 has the same address as the MS5837 and will also pass the CRC check)
 	// (but will hopefully be unrecognised.)
+	_initialized = true;
 	return true;
 }
 
@@ -127,14 +132,18 @@ void MS5837::setFluidDensity(float density) {
 
 void MS5837::read() {
 	//Check that _i2cPort is not NULL (i.e. has the user forgoten to call .init or .begin?)
-	if (_i2c == NULL)
+	if (_i2c == NULL || _initialized == false)
 	{
 		return;
 	}
 
 	// Request D1 conversion
 	uint8_t cmd = MS5837_CONVERT_D1_8192;
-	i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, false);
+	if (i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, false) == PICO_ERROR_GENERIC)
+	{
+		_initialized = false;
+		return;
+	}
 
 	sleep_ms(20); // Max conversion time per datasheet
 
@@ -282,4 +291,9 @@ uint8_t MS5837::crc4(uint16_t n_prom[]) {
 	n_rem = ((n_rem >> 12) & 0x000F);
 
 	return n_rem ^ 0x00;
+}
+
+bool MS5837::isInitialized()
+{
+	return _initialized;
 }

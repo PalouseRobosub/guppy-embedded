@@ -89,6 +89,8 @@ public:
 	 */
 	float altitude();
 
+	bool isInitialized();
+
 private:
 
 	//This stores the requested i2c port
@@ -99,6 +101,7 @@ private:
 	int32_t TEMP;
 	int32_t P;
 	uint8_t _model;
+	bool _initialized;
 
 	float fluidDensity;
 
