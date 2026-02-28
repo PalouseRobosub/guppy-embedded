@@ -1,4 +1,7 @@
+#include "Adafruit_NeoPixel.hpp"
 #include "led.hpp"
+
+#define CLOCKS_PER_MS (CLOCKS_PER_SEC/1000)
 
 #define WHITE Adafruit_NeoPixel::Color(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS)
 #define RED Adafruit_NeoPixel::Color(BRIGHTNESS, 0, 0)
@@ -12,6 +15,8 @@
 LEDState::LEDState(int pin)
 {
     tick_count = 0;
+    time_last_updated = get_absolute_time();
+    update_rate_ms = 250;
     led_strip = Adafruit_NeoPixel(NUM_LEDS, pin, NEO_GRB + NEO_KHZ800);
     led_strip.begin();
     state = STARTUP;
@@ -32,32 +37,23 @@ void LEDState::two_color(uint32_t color1, uint32_t color2)
 
 void LEDState::tick()
 {
+    auto current_time = get_absolute_time();
+    if (absolute_time_diff_us(time_last_updated, current_time)/1000 < update_rate_ms)
+    {
+        return;
+    }
+    time_last_updated = current_time;
+
     switch (state)
     {
-        case STARTUP:
-            this->startup();
-            break;
-        case HOLDING:
-            this->holding();
-            break;
-        case NAV:
-            this->nav();
-            break;
-        case TASK:
-            this->task();
-            break;
-        case TELEOP:
-            this->teleop();
-            break;
-        case DISABLED:
-            this->disabled();
-            break;
-        case FAULT:
-            this->fault();
-            break;
-        default:
-            this->fault();
-            break;
+        case STARTUP:  this->startup();  break;
+        case HOLDING:  this->holding();  break;
+        case NAV:      this->nav();      break;
+        case TASK:     this->task();     break;
+        case TELEOP:   this->teleop();   break;
+        case DISABLED: this->disabled(); break;
+        case FAULT:    this->fault();    break;
+        default:       this->fault();    break;
     }
     led_strip.show();
     ++tick_count;
@@ -104,19 +100,5 @@ void LEDState::fault()
         two_color(RED, WHITE);
     else
         two_color(WHITE, RED);
-    /*
-    int chunk_size = 6;
-    for (int i = 0; i < NUM_LEDS/chunk_size; ++i)
-    {
-        for (int j = 0; j < chunk_size; ++j)
-        {
-            int index = (chunk_size*i + j) % NUM_LEDS;
-            if (i % 2 == tick_count % 2)
-                led_strip.setPixelColor(index, WHITE);
-            if (i % 2 == (tick_count + 1) % 2)
-                led_strip.setPixelColor(index, RED);
-        }
-    }
-    */
 }
 

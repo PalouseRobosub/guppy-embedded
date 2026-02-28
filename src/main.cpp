@@ -23,7 +23,7 @@ int main()
         for (int i = 0; i < 10; ++i)
         {
             led_strip.tick();
-            sleep_ms(250);
+            // sleep_ms(250);
         }
         led_strip.state = (State) ((led_strip.state + 1) % 7);
     }
@@ -36,6 +36,7 @@ int main()
         case 2:
             run_barometer_sensor();
             break;
+        case -1:
         default: // test
             break;
     }

@@ -1,6 +1,9 @@
 #ifndef GUPPY_EMBEDDED_LED_H
 #define GUPPY_EMBEDDED_LED_H
 
+extern "C" {
+    #include "pico/stdlib.h"
+}
 #include "Adafruit_NeoPixel.hpp"
 
 #define NUM_LEDS 144
@@ -19,9 +22,17 @@ enum State {
 
 class LEDState
 {
+public:
+    State state;
+    /// `pin` is the gpio pin the LED line data is connected to
+    LEDState(int pin);
+    /// Updates the LED strip
+    void tick();
 private:
     int tick_count;
     Adafruit_NeoPixel led_strip;
+    absolute_time_t time_last_updated;
+    int update_rate_ms;
     void two_color(uint32_t color1, uint32_t color2);
     void startup();
     void holding();
@@ -30,11 +41,6 @@ private:
     void teleop();
     void disabled();
     void fault();
-public:
-    State state;
-    /// `pin` is the gpio pin the LED line data is connected to
-    LEDState(int pin);
-    void tick();
 };
 
 #endif //GUPPY_EMBEDDED_LED_H
