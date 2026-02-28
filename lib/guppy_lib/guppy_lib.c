@@ -84,13 +84,13 @@ int canbus_transmit_float(uint32_t id, float value)
     return sts;
 }
 
-int canbus_transmit_int(uint32_t id, int value)
+int canbus_transmit_int(uint32_t id, int32_t value)
 {
     struct can2040_msg tmsg;
     tmsg.id = id; // TODO: isn't id 11 bits, why does this take 32bit?
-    tmsg.dlc = sizeof(int);
+    tmsg.dlc = sizeof(int32_t);
     uint32_t data;
-    memcpy(&data, &value, sizeof(int));
+    memcpy(&data, &value, sizeof(int32_t));
     tmsg.data32[0] = data;
     int sts = can2040_transmit(&cbus, &tmsg);
 
@@ -105,10 +105,10 @@ float can_read_float(struct can2040_msg msg) // TODO: is it possible to have a t
     return value;
 }
 
-int can_read_int(struct can2040_msg msg)
+int32_t can_read_int(struct can2040_msg msg)
 {
-    int value;
-    memcpy(&value, msg.data, sizeof(int));
+    int32_t value;
+    memcpy(&value, msg.data, sizeof(int32_t));
 
     return value;
 }
