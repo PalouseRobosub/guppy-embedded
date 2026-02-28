@@ -8,8 +8,8 @@
 #define GREEN Adafruit_NeoPixel::Color(0, BRIGHTNESS, 0)
 #define BLUE Adafruit_NeoPixel::Color(0, 0, BRIGHTNESS)
 #define YELLOW Adafruit_NeoPixel::Color(BRIGHTNESS, BRIGHTNESS, 0)
-#define ORANGE Adafruit_NeoPixel::Color(BRIGHTNESS, BRIGHTNESS/2, 0)
-#define PURPLE Adafruit_NeoPixel::Color(BRIGHTNESS/2, 0, BRIGHTNESS)
+// #define ORANGE Adafruit_NeoPixel::Color(BRIGHTNESS, BRIGHTNESS/2, 0)
+// #define PURPLE Adafruit_NeoPixel::Color(BRIGHTNESS/2, 0, BRIGHTNESS)
 #define OFF Adafruit_NeoPixel::Color(0, 0, 0)
 
 LEDState::LEDState(int pin)
@@ -69,11 +69,11 @@ void LEDState::holding()
 }
 void LEDState::nav()
 {
-    this->two_color(BLUE, ORANGE);
+    this->two_color(BLUE, RED);
 }
 void LEDState::task()
 {
-    this->two_color(BLUE, PURPLE);
+    this->two_color(RED, RED);
 }
 void LEDState::teleop()
 {
