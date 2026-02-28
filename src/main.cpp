@@ -17,17 +17,6 @@ int main()
     stdio_init_all();
     canbus_setup();
 
-    LEDState led_strip = LEDState(20);
-    while (true)
-    {
-        for (int i = 0; i < 10; ++i)
-        {
-            led_strip.tick();
-            // sleep_ms(250);
-        }
-        led_strip.state = (State) ((led_strip.state + 1) % 7);
-    }
-
     switch(BOARD_TYPE)
     {
         case 1: // TODO: should be enum?
@@ -38,6 +27,16 @@ int main()
             break;
         case -1:
         default: // test
+            LEDState led_strip = LEDState(20);
+            while (true)
+            {
+                for (int i = 0; i < 10; ++i)
+                {
+                    led_strip.tick();
+                    // sleep_ms(250);
+                }
+                led_strip.state = (State) ((led_strip.state + 1) % 7);
+            }
             break;
     }
 }

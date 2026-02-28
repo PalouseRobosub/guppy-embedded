@@ -93,3 +93,26 @@ pico_enable_stdio_usb(board_wet 1)
 pico_enable_stdio_uart(board_wet 0)
 
 pico_add_extra_outputs(board_wet)
+
+# Test Board
+add_executable(board_test
+        src/main.cpp
+        ${MODULE_SOURCES}
+)
+
+pico_set_binary_type(board_test copy_to_ram)
+target_link_libraries(board_test
+        pico_stdlib
+        can2040
+        guppy_lib
+        pico_neopixel
+        led_strip
+        barometer
+)
+
+target_compile_definitions(board_test PRIVATE BOARD_TYPE=-1)
+
+pico_enable_stdio_usb(board_test 1)
+pico_enable_stdio_uart(board_test 0)
+
+pico_add_extra_outputs(board_test)
