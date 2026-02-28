@@ -20,11 +20,6 @@ extern "C" {
 
 void board_wet_loop()
 {
-    Adafruit_NeoPixel ledStrip(10, LEDS_PIN, NEO_GRB + NEO_KHZ800);
-    ledStrip.begin();
-
-    
-
     // #if !defined(i2c_default) || !defined(PICO_DEFAULT_I2C_SDA_PIN) || !defined(PICO_DEFAULT_I2C_SCL_PIN)
     // #warning You need a board with i2c pins! Cant run the barometer module
     // return;
@@ -67,8 +62,19 @@ void board_wet_loop()
 
     std::cout << "sensor initialized!" << std::endl;
 
+    LEDState led_strip(LEDS_PIN);
+    struct can2040_msg msg = { 0 };
+
     while (1)
-    {   
+    {
+        if (canbus_read(&msg)) // returns true if has message. Sets the &msg to the message
+        {
+            led_strip.update(msg);
+        }
+
+        do_heartbeat(0x020);
+        led_strip.tick();
+
         sensor.read(); // takes up to 40ms to run, this should have delay between uses
 
         float depth = sensor.depth();
@@ -82,14 +88,8 @@ void board_wet_loop()
         canbus_transmit_float(0x026, depth);
         canbus_transmit_float(0x025, temp);
 
-        for (int i = 0; i < 10; i++)
-        {
-            do_heartbeat(0x20);
 
-            canbus_transmit_int(0x022, gpio_get(SWITCH_PIN_ONE));
-            canbus_transmit_int(0x023, gpio_get(SWITCH_PIN_TWO));
-
-            sleep_ms(100); // TODO: use current time instead?
-        }
+        canbus_transmit_int(0x022, gpio_get(SWITCH_PIN_ONE));
+        canbus_transmit_int(0x023, gpio_get(SWITCH_PIN_TWO));
     }
 }

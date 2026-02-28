@@ -4,6 +4,7 @@
 extern "C" {
     #include "pico/stdlib.h"
 }
+#include "led.hpp"
 #include "Adafruit_NeoPixel.hpp"
 
 #define NUM_LEDS 144
@@ -28,6 +29,9 @@ public:
     LEDState(int pin);
     /// Updates the LED strip
     void tick();
+    /// Updates LEDState based on the provided CAN message
+    /// (does care about CAN ID and will ignore messages from most IDs)
+    void update(const struct can2040_msg& msg);
 private:
     int tick_count;
     Adafruit_NeoPixel led_strip;

@@ -1,3 +1,7 @@
+extern "C" {
+    #include "can2040.h"
+    #include "guppy_lib.h"
+}
 #include "Adafruit_NeoPixel.hpp"
 #include "led.hpp"
 
@@ -15,7 +19,7 @@
 LEDState::LEDState(int pin)
 {
     tick_count = 0;
-    time_last_updated = get_absolute_time();
+    time_last_updated = nil_time; // TODO: hopefully this works
     update_rate_ms = 250;
     led_strip = Adafruit_NeoPixel(NUM_LEDS, pin, NEO_GRB + NEO_KHZ800);
     led_strip.begin();
@@ -32,6 +36,16 @@ void LEDState::two_color(uint32_t color1, uint32_t color2)
         for (int j = 6; j < 12; ++j) {
             led_strip.setPixelColor(i+j, color2);
         }
+    }
+}
+
+void LEDState::update(const can2040_msg& msg)
+{
+    if (msg.id == 0x201)
+    {
+        // TODO: I have no clue how big of an integer the state is sent as,
+        //       check that if this doesn't work
+        state = static_cast<State>(can_read_int(msg));
     }
 }
 
