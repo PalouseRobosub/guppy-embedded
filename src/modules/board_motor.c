@@ -1,6 +1,6 @@
-#include "motor_controller.h"
+#include "board_motor.h"
 #include "can2040.h"
-#include "../guppy_lib.h"
+#include "guppy_lib.h"
 #include "pico/stdlib.h"
 #include <stdio.h>
 
@@ -10,7 +10,7 @@ static const uint16_t motor_board_id = 0x410;
 
 #define MOTOR_MULT 0.1
 
-void run_motor_controller()
+void board_motor_loop()
 {
     for (int i = 0; i < sizeof(pins)/sizeof(uint8_t); i++) {
         add_pwm_pin(pins[i]);

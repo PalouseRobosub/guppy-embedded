@@ -1,6 +1,6 @@
 #ifndef GUPPY_MOTOR_CONTROLLER_H
 #define GUPPY_MOTOR_CONTROLLER_H
 
-void run_motor_controller();
+void board_motor_loop();
 
 #endif // GUPPY_MOTOR_CONTROLLER_H
