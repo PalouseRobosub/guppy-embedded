@@ -24,8 +24,6 @@ static void init_pins()
     i2c_init(PICO_I2C_INSTANCE, 400 * 1000);
     gpio_set_function(PICO_I2C_SDA_PIN, GPIO_FUNC_I2C);
     gpio_set_function(PICO_I2C_SCL_PIN, GPIO_FUNC_I2C);
-    gpio_pull_up(PICO_I2C_SDA_PIN);
-    gpio_pull_up(PICO_I2C_SCL_PIN);
 
     // init switches
     gpio_init(SWITCH_PIN_ONE);
@@ -57,11 +55,14 @@ void board_wet_loop()
     LEDController led_strip(LEDS_PIN);
     struct can2040_msg msg = { 0 };
 
+    LEDController::State previousLEDState = led_strip.state;
+
     while (1)
     {
         if (canbus_read(&msg))
         {
             led_strip.update(msg);
+            previousLEDState = led_strip.state;
         }
 
         if (!sensor.isInitialized())
@@ -69,7 +70,7 @@ void board_wet_loop()
             if (!sensor.init(PICO_I2C_INSTANCE))
                 led_strip.state = LEDController::State::FAULT;
             else
-                led_strip.state = LEDController::State::TELEOP;
+                led_strip.state = previousLEDState;
         }
 
         do_heartbeat(0x020);
@@ -80,10 +81,10 @@ void board_wet_loop()
         float depth = sensor.depth();
         float temp = sensor.temperature();
 
-         printf("\nPressure: %f\n", sensor.pressure());
-         printf("Altitude: %f\n", sensor.altitude());
-         printf("Depth: %f\n", depth);
-         printf("Temperature: %f\n", temp);
+        // printf("\nPressure: %f\n", sensor.pressure());
+        // printf("Altitude: %f\n", sensor.altitude());
+        // printf("Depth: %f\n", depth);
+        // printf("Temperature: %f\n", temp);
 
         canbus_transmit_float(0x026, depth);
         canbus_transmit_float(0x025, temp);
