@@ -1,5 +1,6 @@
-#include "barometer_sensor.h"
+#include "board_wet.h"
 #include "barometer.h"
+#include "led.hpp"
 
 extern "C" {
 #include "pico/stdlib.h"
@@ -7,7 +8,6 @@ extern "C" {
 #include "guppy_lib.h"
 }
 #include <iostream>
-#include "Adafruit_NeoPixel.hpp"
 
 #define PICO_I2C_INSTANCE   i2c0
 #define PICO_I2C_SDA_PIN    16
@@ -17,9 +17,8 @@ extern "C" {
 #define SWITCH_PIN_TWO      19 
 
 #define LEDS_PIN            20
-#define NUM_LEDS            10
 
-void run_barometer_sensor()
+void board_wet_loop()
 {
     Adafruit_NeoPixel ledStrip(10, LEDS_PIN, NEO_GRB + NEO_KHZ800);
     ledStrip.begin();

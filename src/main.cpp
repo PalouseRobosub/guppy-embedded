@@ -4,9 +4,9 @@
 extern "C" {
 #include "pico/stdlib.h"
 #include "guppy_lib.h"
-#include "modules/motor_controller.h"
+#include "modules/board_motor.h"
 }
-#include "modules/barometer_sensor.h"
+#include "modules/board_wet.h"
 #include "led.hpp"
 #include <iostream>
 
@@ -20,20 +20,20 @@ int main()
     switch(BOARD_TYPE)
     {
         case 1: // TODO: should be enum?
-            run_motor_controller();
+            board_motor_loop();
             break;
         case 2:
-            run_barometer_sensor();
+            board_wet_loop();
             break;
         case -1:
         default: // test
             LEDState led_strip = LEDState(20);
             while (true)
             {
-                for (int i = 0; i < 10; ++i)
+                for (int i = 0; i < 2500; ++i)
                 {
                     led_strip.tick();
-                    // sleep_ms(250);
+                    sleep_ms(1);
                 }
                 led_strip.state = (State) ((led_strip.state + 1) % 7);
             }
