@@ -43,7 +43,7 @@ static void can2040_cb(struct can2040 *cd, uint32_t notify, struct can2040_msg *
 
 void canbus_setup()
 {
-    uint32_t pio_num = 1;
+    uint32_t pio_num = 2;
     uint32_t sys_clock = SYS_CLK_HZ, bitrate = 500000;
     uint32_t gpio_rx = 8, gpio_tx = 9;
 
@@ -52,9 +52,9 @@ void canbus_setup()
     can2040_callback_config(&cbus, can2040_cb);
 
     // Enable irqs
-    irq_set_exclusive_handler(PIO1_IRQ_0, PIOx_IRQHandler);
-    irq_set_priority(PIO1_IRQ_0, 1);
-    irq_set_enabled(PIO1_IRQ_0, 1);
+    irq_set_exclusive_handler(PIO2_IRQ_0, PIOx_IRQHandler);
+    irq_set_priority(PIO2_IRQ_0, 1);
+    irq_set_enabled(PIO2_IRQ_0, 1);
 
     // Start canbus
     can2040_start(&cbus, sys_clock, bitrate, gpio_rx, gpio_tx);

@@ -62,6 +62,8 @@ void board_wet_loop()
 
     LEDController::State previousLEDState = led_strip.state;
 
+    int tick = 0;
+
     while (1)
     {
 
@@ -101,22 +103,30 @@ void board_wet_loop()
         float depth{};
         float temp{};
 
-        if (sensor.read()) // takes up to 40ms to run, this should have delay between uses
+        if (tick++ == 3) // can bus is getting full so im going to only send stuff like every 100ms
         {
-            depth = sensor.depth();
-            temp = sensor.temperature();
+            if (sensor.read())
+            {
+                depth = sensor.depth();
+                temp = sensor.temperature();
 
-            canbus_transmit_float(0x026, depth);
-            canbus_transmit_float(0x025, temp);
+                canbus_transmit_float(0x026, depth);
+                canbus_transmit_float(0x025, temp);
 
-            // printf("\nPressure: %f\n", sensor.pressure());
-            // printf("Altitude: %f\n", sensor.altitude());
-            // printf("Depth: %f\n", depth);
-            // printf("Temperature: %f\n", temp);
+                //printf("\nPressure: %f\n", sensor.pressure());
+                // printf("Altitude: %f\n", sensor.altitude());
+                // printf("Depth: %f\n", depth);
+                // printf("Temperature: %f\n", temp);
+            }
+            
+
+            canbus_transmit_int(0x022, gpio_get(SWITCH_PIN_ONE));
+            canbus_transmit_int(0x023, gpio_get(SWITCH_PIN_TWO));
+
+            tick = 0;
         }
         
 
-        canbus_transmit_int(0x022, gpio_get(SWITCH_PIN_ONE));
-        canbus_transmit_int(0x023, gpio_get(SWITCH_PIN_TWO));
+        sleep_ms(10);
     }
 }
