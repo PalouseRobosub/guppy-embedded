@@ -5,8 +5,6 @@ extern "C" {
 #include "Adafruit_NeoPixel.hpp"
 #include "led.hpp"
 
-#define CLOCKS_PER_MS (CLOCKS_PER_SEC/1000)
-
 /// Number of LEDs in a row of a continuous color
 #define LED_GROUP_SIZE 13
 
