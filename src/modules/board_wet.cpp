@@ -13,10 +13,10 @@ extern "C" {
 #define PICO_I2C_SDA_PIN    16 // white
 #define PICO_I2C_SCL_PIN    17 // green
 
-#define SWITCH_PIN_ONE      18
+#define SWITCH_PIN_ONE      26
 #define SWITCH_PIN_TWO      19 
 
-#define LEDS_PIN            25
+#define LEDS_PIN            20
 
 static void init_pins()
 {
@@ -24,11 +24,13 @@ static void init_pins()
     i2c_init(PICO_I2C_INSTANCE, 400 * 1000);
     gpio_set_function(PICO_I2C_SDA_PIN, GPIO_FUNC_I2C);
     gpio_set_function(PICO_I2C_SCL_PIN, GPIO_FUNC_I2C);
+    gpio_pull_up(PICO_I2C_SCL_PIN);
+    gpio_pull_up(PICO_I2C_SDA_PIN);
 
     // init switches
     gpio_init(SWITCH_PIN_ONE);
     gpio_init(SWITCH_PIN_TWO);
-    gpio_set_dir(SWITCH_PIN_ONE, GPIO_IN);
+    gpio_set_dir(SWITCH_PIN_ONE, GPIO_IN); // TODO: turn to guppy_lib function
     gpio_set_dir(SWITCH_PIN_TWO, GPIO_IN);
     gpio_pull_down(SWITCH_PIN_ONE);
     gpio_pull_down(SWITCH_PIN_TWO);
@@ -50,6 +52,7 @@ void board_wet_loop()
         std::cout << "Are SDA/SCL connected correctly?" << std::endl;
         std::cout << "Blue Robotics Bar30: White=SDA, Green=SCL" << std::endl;
     }
+
     sensor.setFluidDensity(997); // kg/m^3 (freshwater) TODO: change to actual density
 
     LEDController led_strip(LEDS_PIN);
@@ -59,16 +62,30 @@ void board_wet_loop()
 
     while (1)
     {
+        
         if (canbus_read(&msg))
         {
             led_strip.update(msg);
             previousLEDState = led_strip.state;
         }
 
+        if (gpio_get(SWITCH_PIN_ONE))
+        {
+            led_strip.state = LEDController::State::NAV;
+        } 
+        else 
+        {
+            led_strip.state = previousLEDState;
+        }
+
+        
         if (!sensor.isInitialized())
         {
             if (!sensor.init(PICO_I2C_INSTANCE))
+            {
                 led_strip.state = LEDController::State::FAULT;
+                printf("Failed to do initialize barometer!\n");
+            }
             else
                 led_strip.state = previousLEDState;
         }
@@ -81,14 +98,16 @@ void board_wet_loop()
         float depth = sensor.depth();
         float temp = sensor.temperature();
 
-        // printf("\nPressure: %f\n", sensor.pressure());
-        // printf("Altitude: %f\n", sensor.altitude());
-        // printf("Depth: %f\n", depth);
-        // printf("Temperature: %f\n", temp);
+        if (sensor.isInitialized())
+        {
+            printf("\nPressure: %f\n", sensor.pressure());
+            printf("Altitude: %f\n", sensor.altitude());
+            printf("Depth: %f\n", depth);
+            printf("Temperature: %f\n", temp);
+        }
 
         canbus_transmit_float(0x026, depth);
         canbus_transmit_float(0x025, temp);
-
 
         canbus_transmit_int(0x022, gpio_get(SWITCH_PIN_ONE));
         canbus_transmit_int(0x023, gpio_get(SWITCH_PIN_TWO));
