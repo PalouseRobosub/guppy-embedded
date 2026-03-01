@@ -70,7 +70,7 @@ public:
 
 	/** The read from I2C takes up to 40 ms, so use sparingly is possible.
 	 */
-	void read();
+	bool read();
 
 	/** Pressure returned in mbar or mbar*conversion rate.
 	 */

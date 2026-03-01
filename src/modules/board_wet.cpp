@@ -55,14 +55,16 @@ void board_wet_loop()
 
     sensor.setFluidDensity(997); // kg/m^3 (freshwater) TODO: change to actual density
 
+
     LEDController led_strip(LEDS_PIN);
+
     struct can2040_msg msg = { 0 };
 
     LEDController::State previousLEDState = led_strip.state;
 
     while (1)
     {
-        
+
         if (canbus_read(&msg))
         {
             led_strip.update(msg);
@@ -87,27 +89,32 @@ void board_wet_loop()
                 printf("Failed to do initialize barometer!\n");
             }
             else
+            {
                 led_strip.state = previousLEDState;
+            }
         }
 
         do_heartbeat(0x020);
         led_strip.tick();
 
-        sensor.read(); // takes up to 40ms to run, this should have delay between uses
 
-        float depth = sensor.depth();
-        float temp = sensor.temperature();
+        float depth{};
+        float temp{};
 
-        if (sensor.isInitialized())
+        if (sensor.read()) // takes up to 40ms to run, this should have delay between uses
         {
-            printf("\nPressure: %f\n", sensor.pressure());
-            printf("Altitude: %f\n", sensor.altitude());
-            printf("Depth: %f\n", depth);
-            printf("Temperature: %f\n", temp);
-        }
+            depth = sensor.depth();
+            temp = sensor.temperature();
 
-        canbus_transmit_float(0x026, depth);
-        canbus_transmit_float(0x025, temp);
+            canbus_transmit_float(0x026, depth);
+            canbus_transmit_float(0x025, temp);
+
+            // printf("\nPressure: %f\n", sensor.pressure());
+            // printf("Altitude: %f\n", sensor.altitude());
+            // printf("Depth: %f\n", depth);
+            // printf("Temperature: %f\n", temp);
+        }
+        
 
         canbus_transmit_int(0x022, gpio_get(SWITCH_PIN_ONE));
         canbus_transmit_int(0x023, gpio_get(SWITCH_PIN_TWO));

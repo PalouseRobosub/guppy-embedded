@@ -130,11 +130,11 @@ void MS5837::setFluidDensity(float density) {
 	fluidDensity = density;
 }
 
-void MS5837::read() {
+bool MS5837::read() {
 	//Check that _i2cPort is not NULL (i.e. has the user forgoten to call .init or .begin?)
 	if (_i2c == NULL || _initialized == false)
 	{
-		return;
+		return false;
 	}
 
 	// Request D1 conversion
@@ -142,16 +142,22 @@ void MS5837::read() {
 	if (i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, false) == PICO_ERROR_GENERIC)
 	{
 		_initialized = false;
-		return;
+		return false;
 	}
 
 	sleep_ms(20); // Max conversion time per datasheet
 
 	cmd = MS5837_ADC_READ;
-	i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, true);
+	if (i2c_write_blocking_until(_i2c, MS5837_ADDR, &cmd, 1, true, make_timeout_time_ms(10)) == PICO_ERROR_TIMEOUT)
+	{
+		return false;
+	}
 
-	uint8_t buffer[3];
-	i2c_read_blocking(_i2c, MS5837_ADDR, buffer, 3, false);
+	uint8_t buffer[3]{};
+	if (i2c_read_blocking_until(_i2c, MS5837_ADDR, buffer, 3, false, make_timeout_time_ms(10)) == PICO_ERROR_TIMEOUT)
+	{
+		return false;
+	}
 
 	D1_pres = (uint32_t(buffer[0]) << 16) |
               (uint32_t(buffer[1]) << 8)  |
@@ -159,20 +165,22 @@ void MS5837::read() {
 
 	// Request D2 conversion
 	cmd = MS5837_CONVERT_D2_8192;
-	i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, false);
+	i2c_write_blocking_until(_i2c, MS5837_ADDR, &cmd, 1, false, make_timeout_time_ms(10));
 
 	sleep_ms(20); // Max conversion time per datasheet
 
 	cmd = MS5837_ADC_READ;
-	i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, true);
+	i2c_write_blocking_until(_i2c, MS5837_ADDR, &cmd, 1, true, make_timeout_time_ms(10));
 
-	i2c_read_blocking(_i2c, MS5837_ADDR, buffer, 3, false);
+	i2c_read_blocking_until(_i2c, MS5837_ADDR, buffer, 3, false, make_timeout_time_ms(10));
 
 	D2_temp = (uint32_t(buffer[0]) << 16) |
               (uint32_t(buffer[1]) << 8)  |
                uint32_t(buffer[2]);
 
 	calculate();
+
+	return true;
 }
 
 void MS5837::calculate() {

@@ -17,12 +17,11 @@ extern "C" {
 // #define PURPLE Adafruit_NeoPixel::Color(BRIGHTNESS/2, 0, BRIGHTNESS)
 #define LED_OFF Adafruit_NeoPixel::Color(0, 0, 0)
 
-LEDController::LEDController(int pin, int led_count)
+LEDController::LEDController(int pin, int led_count) : led_strip(led_count, pin, NEO_GRB + NEO_KHZ800)
 {
     tick_count = 0;
     time_last_updated = nil_time; // TODO: hopefully this works
     update_rate_ms = 250;
-    led_strip = Adafruit_NeoPixel(led_count, pin, NEO_GRB + NEO_KHZ800);
     led_strip.begin();
     state = State::STARTUP;
     this->led_count = led_count;
