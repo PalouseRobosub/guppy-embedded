@@ -7,16 +7,12 @@ extern "C" {
 #include "led.hpp"
 #include "Adafruit_NeoPixel.hpp"
 
-#define NUM_LEDS 144
 #define BRIGHTNESS 50 // brightness of pixels out of 255
-
-
 
 
 class LEDController
 {
 public:
-
     enum class State {
         STARTUP = 0,
         HOLDING = 1,
@@ -28,8 +24,9 @@ public:
     };
 
     State state;
+    int led_count;
     /// `pin` is the gpio pin the LED line data is connected to
-    LEDController(int pin);
+    LEDController(int pin, int led_count=78); // 78 from 26*3 for guppy
     /// Updates the LED strip
     void tick();
     /// Updates LEDController based on the provided CAN message

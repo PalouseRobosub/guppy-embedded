@@ -7,6 +7,9 @@ extern "C" {
 
 #define CLOCKS_PER_MS (CLOCKS_PER_SEC/1000)
 
+/// Number of LEDs in a row of a continuous color
+#define LED_GROUP_SIZE 13
+
 #define LED_WHITE Adafruit_NeoPixel::Color(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS)
 #define LED_RED Adafruit_NeoPixel::Color(BRIGHTNESS, 0, 0)
 #define LED_GREEN Adafruit_NeoPixel::Color(0, BRIGHTNESS, 0)
@@ -16,24 +19,25 @@ extern "C" {
 // #define PURPLE Adafruit_NeoPixel::Color(BRIGHTNESS/2, 0, BRIGHTNESS)
 #define LED_OFF Adafruit_NeoPixel::Color(0, 0, 0)
 
-LEDController::LEDController(int pin)
+LEDController::LEDController(int pin, int led_count)
 {
     tick_count = 0;
     time_last_updated = nil_time; // TODO: hopefully this works
     update_rate_ms = 250;
-    led_strip = Adafruit_NeoPixel(NUM_LEDS, pin, NEO_GRB + NEO_KHZ800);
+    led_strip = Adafruit_NeoPixel(led_count, pin, NEO_GRB + NEO_KHZ800);
     led_strip.begin();
     state = State::STARTUP;
+    this->led_count = led_count;
 }
 
 void LEDController::two_color(uint32_t color1, uint32_t color2)
 {
-    for (int i = 0; i <= NUM_LEDS - 12; i += 12)
+    for (int i = 0; i <= led_count - LED_GROUP_SIZE*2; i += LED_GROUP_SIZE*2)
     {
-        for (int j = 0; j < 6; ++j) {
+        for (int j = 0; j < LED_GROUP_SIZE; ++j) {
             led_strip.setPixelColor(i+j, color1);
         }
-        for (int j = 6; j < 12; ++j) {
+        for (int j = LED_GROUP_SIZE; j < LED_GROUP_SIZE*2; ++j) {
             led_strip.setPixelColor(i+j, color2);
         }
     }
@@ -91,14 +95,14 @@ void LEDController::task()
 }
 void LEDController::teleop()
 {
-    for (int i = 0; i <= NUM_LEDS - 1; i += 1)
+    for (int i = 0; i <= led_count - 1; i += 1)
     {
         led_strip.setPixelColor(i, LED_GREEN);
     }
 }
 void LEDController::disabled()
 {
-    for (int i = 0; i <= NUM_LEDS - 6; i += 6)
+    for (int i = 0; i <= led_count - 6; i += 6)
     {
         led_strip.setPixelColor(i, LED_YELLOW);
         led_strip.setPixelColor(i+1, LED_OFF);
