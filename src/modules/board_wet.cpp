@@ -10,8 +10,8 @@ extern "C" {
 #include <iostream>
 
 #define PICO_I2C_INSTANCE   i2c0
-#define PICO_I2C_SDA_PIN    16
-#define PICO_I2C_SCL_PIN    17
+#define PICO_I2C_SDA_PIN    16 // white
+#define PICO_I2C_SCL_PIN    17 // green
 
 #define SWITCH_PIN_ONE      18
 #define SWITCH_PIN_TWO      19 
