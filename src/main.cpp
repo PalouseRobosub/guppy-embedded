@@ -10,8 +10,6 @@ extern "C" {
 #include "led.hpp"
 #include <iostream>
 
-#define NUM_LEDS 144
-
 int main()
 {
     stdio_init_all();
