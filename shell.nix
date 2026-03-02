@@ -13,5 +13,4 @@ in pkgs.mkShell {
         pico-sdk
     ];
     PICO_SDK_PATH = "${pico-sdk}/lib/pico-sdk";
-    PICO_PLATFORM = "rp2350";
 }

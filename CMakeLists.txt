@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 # Pico SDK
-set(PICO_SDK_FETCH_FROM_GIT on)
+set(PICO_PLATFORM rp2350)
 include(pico_sdk_import.cmake)
 
 project(guppy_embedded)
