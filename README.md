@@ -12,22 +12,44 @@ Currently, the CAN base code comes from [KevinOConnor/can2040](https://github.co
 
 ## Setup
 
+To acquire the necessary build dependencies you can use the Dev Container or Nix.
+
+### Using the Dev Container:
 1. Install an IDE which supports Dev Containers (VSCode, CLion, etc.)
-2. Clone this repo.
+2. Install `picotool` from your package manager or [the repository](https://github.com/raspberrypi/picotool)
 3. Build and reopen the project within the Dev Container. (IDE specific)
-4. `cd` into `example/` dir.
-5. make and enter a build dir: `mkdir build` and `cd build`
-6. Generate build files: `cmake ..`
-7. Compile: `make`
-8. Upload the `.uf2` file onto the microcontroller.
+
+### Using Nix:
+1. [Install Nix](https://nixos.org/download)
+2. Run `nix-shell` to enter an environment with dependencies and `picotool` installed
+
+### Building:
+1. Make and enter a build dir: `mkdir build` and `cd build`
+2. Generate build files: `cmake ..`
+3. Compile: `make`
+
+### Flashing:
+To start, plug in the board to your computer.
+#### Manual (finicky)
+1. Put the microcontroller into bootsel mode by holding down the RST and BOOT buttons
+2. It should then connect to your computer as a storage device
+3. Move `board_[board-name].uf2` onto the storage
+#### Using `picotool`
+
+```sh
+picotool load -f board_[board-name].uf2
+```
+You may have to manually put the microcontroller into bootsel mode if it's being uncooperative.
 
 ## Organization
-
-Work in progress...
+ 
+- `/lib`: Libraries (`led` and `guppy_lib` are bespoke)
+- `/src/modules`: Board-specific code
+- `/src/main.cpp`: Entrypoint
 
 ## Contributing
 
-To contribute code:
+### To contribute code:
 
 1. Make a new branch with the format `name/feature_name` such as `adrian/add_status_led` and make all changes in that branch.
 2. Make a Pull Request to the `main` branch and request `@guppyadrian` as a reviewer.
