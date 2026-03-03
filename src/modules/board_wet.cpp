@@ -60,8 +60,6 @@ void board_wet_loop()
 
     struct can2040_msg msg = { 0 };
 
-    LEDController::State previousLEDState = led_strip.state;
-
     int tick = 0;
 
     while (1)
@@ -70,18 +68,14 @@ void board_wet_loop()
         if (canbus_read(&msg))
         {
             led_strip.update(msg);
-            previousLEDState = led_strip.state;
         }
+
+        LEDController::State previousLEDState = led_strip.state;
 
         if (gpio_get(SWITCH_PIN_ONE))
         {
             led_strip.state = LEDController::State::NAV;
-        } 
-        else 
-        {
-            led_strip.state = previousLEDState;
         }
-
         
         if (!sensor.isInitialized())
         {
@@ -90,15 +84,12 @@ void board_wet_loop()
                 led_strip.state = LEDController::State::FAULT;
                 printf("Failed to do initialize barometer!\n");
             }
-            else
-            {
-                led_strip.state = previousLEDState;
-            }
         }
 
         do_heartbeat(0x020);
         led_strip.tick();
 
+        led_strip.state = previousLEDState;
 
         float depth{};
         float temp{};
