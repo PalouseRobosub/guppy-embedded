@@ -66,7 +66,7 @@ bool MS5837::init(i2c_inst_t *i2c_port) {
 
 	// Reset the MS5837, per datasheet
 	cmd = MS5837_RESET;
-	if (i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, false) == PICO_ERROR_GENERIC)
+	if (i2c_write_blocking_until(_i2c, MS5837_ADDR, &cmd, 1, false, make_timeout_time_ms(100)) == PICO_ERROR_GENERIC)
 	{
 		return false; // no device found
 	}
@@ -77,10 +77,10 @@ bool MS5837::init(i2c_inst_t *i2c_port) {
 	// Read calibration values and CRC
 	for ( uint8_t i = 0 ; i < 7 ; i++ ) {
 		cmd = MS5837_PROM_READ+i*2;
-		i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, true);
+		i2c_write_blocking_until(_i2c, MS5837_ADDR, &cmd, 1, true, make_timeout_time_ms(100));
 
 		uint8_t buffer[2]{};
-		i2c_read_blocking(_i2c, MS5837_ADDR, buffer, 2, false);
+		i2c_read_blocking_until(_i2c, MS5837_ADDR, buffer, 2, false, make_timeout_time_ms(100));
 		C[i] = (uint16_t(buffer[0]) << 8) | buffer[1];
 	}
 
@@ -139,7 +139,8 @@ bool MS5837::read() {
 
 	// Request D1 conversion
 	uint8_t cmd = MS5837_CONVERT_D1_8192;
-	if (i2c_write_blocking(_i2c, MS5837_ADDR, &cmd, 1, false) == PICO_ERROR_GENERIC)
+	int result = i2c_write_blocking_until(_i2c, MS5837_ADDR, &cmd, 1, false, make_timeout_time_ms(10));
+	if (result == PICO_ERROR_GENERIC)
 	{
 		_initialized = false;
 		return false;
