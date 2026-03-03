@@ -31,7 +31,7 @@ public:
     void tick();
     /// Updates LEDController based on the provided CAN message
     /// (does care about CAN ID and will ignore messages from most IDs)
-    void update(const struct can2040_msg& msg);
+    bool update(const struct can2040_msg& msg);
 private:
     int tick_count;
     Adafruit_NeoPixel led_strip;

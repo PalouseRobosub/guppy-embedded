@@ -40,14 +40,16 @@ void LEDController::two_color(uint32_t color1, uint32_t color2)
     }
 }
 
-void LEDController::update(const can2040_msg& msg)
+bool LEDController::update(const can2040_msg& msg)
 {
     if (msg.id == 0x201)
     {
         // TODO: I have no clue how big of an integer the state is sent as,
         //       check that if this doesn't work
         state = static_cast<State>(can_read_int(msg));
+        return true;
     }
+    else return false;
 }
 
 void LEDController::tick()
