@@ -72,10 +72,10 @@ void board_wet_loop()
 
         LEDController::State previousLEDState = led_strip.state;
 
-        if (gpio_get(SWITCH_PIN_ONE))
-        {
-            led_strip.state = LEDController::State::NAV;
-        }
+        // if (gpio_get(SWITCH_PIN_ONE))
+        // {
+        //     led_strip.state = LEDController::State::NAV;
+        // }
         
         if (!sensor.isInitialized())
         {
