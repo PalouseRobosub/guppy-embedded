@@ -10,7 +10,7 @@ extern "C" {
 // TODO: untested pin numbers
 #define NUM_PINS 8
 static const uint8_t pwm_pins[NUM_PINS] = { 16, 17, 18, 19, 20, 25, 26, 27 };
-static int last_updates[NUM_PINS]{};
+static RateLimit last_updates[NUM_PINS]{};
 static const uint8_t led_pin = 28;
 static const uint16_t motor_board_id = 0x410;
 
@@ -21,7 +21,7 @@ void board_motor_loop()
 {
     for (int i = 0; i < NUM_PINS; i++) {
         add_pwm_pin(pwm_pins[i]);
-        last_updates[i] = 0;
+        last_updates[i] = new_rate_limit(500);
     }
 
     LEDController led_strip(led_pin);
@@ -31,7 +31,7 @@ void board_motor_loop()
         do_heartbeat(0x010);
         led_strip.tick();
 
-        const int cur_time = to_ms_since_boot(get_absolute_time());
+        const absolute_time_t cur_time = get_absolute_time();
 
         struct can2040_msg msg = { 0 };
         if (canbus_read(&msg)) // returns true if has message. Sets the &msg to the message
@@ -50,18 +50,17 @@ void board_motor_loop()
 
                 const int index = msg.id - motor_board_id - 1;
                 pwm_write(pwm_pins[index], micro_seconds);
-                last_updates[index] = cur_time;
+                last_updates[index].time = cur_time;
             }
         }
 
         #if ALLOW_STALE_MOTORS == false
         for (int i = 0; i < NUM_PINS; i++) // set stale motors to 0
         {
-            if (cur_time - last_updates[i] > 500)
+            if (check_rate(&last_updates[i]))
             {
                 printf("stale motor %d\n", i);
-                pwm_write(pwm_pins[i], 1500); // write 0
-                last_updates[i] = cur_time;
+                pwm_write(pwm_pins[i], throttle_to_pwm_us(0.0));
             }
         }
         #endif
