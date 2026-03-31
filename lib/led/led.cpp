@@ -19,7 +19,7 @@ LEDController::LEDController(int pin, int led_count, int led_group_size) : led_s
 {
     tick_count = 0;
     time_last_updated = nil_time; // TODO: hopefully this works
-    update_rate_ms = 250;
+    rate_limit = new_rate_limit(250);
     led_strip.begin();
     state = State::STARTUP;
     this->led_count = led_count;
@@ -53,12 +53,8 @@ bool LEDController::update(const can2040_msg& msg)
 
 void LEDController::tick()
 {
-    auto current_time = get_absolute_time();
-    if (absolute_time_diff_us(time_last_updated, current_time)/1000 < update_rate_ms)
-    {
+    if (!check_rate(&rate_limit))
         return;
-    }
-    time_last_updated = current_time;
 
     switch (state)
     {

@@ -3,6 +3,7 @@
 
 extern "C" {
     #include "pico/stdlib.h"
+    #include "guppy_lib.h"
 }
 #include "led.hpp"
 #include "Adafruit_NeoPixel.hpp"
@@ -37,8 +38,7 @@ public:
 private:
     int tick_count;
     Adafruit_NeoPixel led_strip;
-    absolute_time_t time_last_updated;
-    int update_rate_ms;
+    RateLimit rate_limit;
     void two_color(uint32_t color1, uint32_t color2);
     void startup();
     void holding();
