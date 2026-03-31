@@ -70,17 +70,8 @@ void board_wet_loop()
             led_strip.update(msg);
         }
 
-        LEDController::State previousLEDState = led_strip.state;
-
-        // if (gpio_get(SWITCH_PIN_ONE))
-        // {
-        //     led_strip.state = LEDController::State::NAV;
-        // }
-
         do_heartbeat(0x020);
         led_strip.tick();
-
-        led_strip.state = previousLEDState;
 
         float depth{};
         float temp{};
