@@ -70,26 +70,8 @@ void board_wet_loop()
             led_strip.update(msg);
         }
 
-        LEDController::State previousLEDState = led_strip.state;
-
-        // if (gpio_get(SWITCH_PIN_ONE))
-        // {
-        //     led_strip.state = LEDController::State::NAV;
-        // }
-        
-        if (!sensor.isInitialized())
-        {
-            if (!sensor.init(PICO_I2C_INSTANCE))
-            {
-                led_strip.state = LEDController::State::FAULT;
-                printf("Failed to do initialize barometer!\n");
-            }
-        }
-
         do_heartbeat(0x020);
         led_strip.tick();
-
-        led_strip.state = previousLEDState;
 
         float depth{};
         float temp{};
@@ -113,6 +95,19 @@ void board_wet_loop()
 
             canbus_transmit_int(0x022, gpio_get(SWITCH_PIN_ONE));
             canbus_transmit_int(0x023, gpio_get(SWITCH_PIN_TWO));
+
+            // Barometer
+            if (!sensor.isInitialized())
+            {
+                if (!sensor.init(PICO_I2C_INSTANCE))
+                {
+                    canbus_transmit_int(0x029, 0);
+                }
+                else
+                {
+                    canbus_transmit_int(0x029, 1);
+                }
+            }
 
             tick = 0;
         }
