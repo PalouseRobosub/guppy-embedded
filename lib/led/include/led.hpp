@@ -25,8 +25,10 @@ public:
 
     State state;
     int led_count;
+    /// Number of LEDs in a row of a continuous color
+    int led_group_size;
     /// `pin` is the gpio pin the LED line data is connected to
-    LEDController(int pin, int led_count=78); // 78 from 26*3 for guppy
+    explicit LEDController(int pin, int led_count=78, int led_group_size=13); // 78 from 26*3 for guppy
     /// Updates the LED strip
     void tick();
     /// Updates LEDController based on the provided CAN message
