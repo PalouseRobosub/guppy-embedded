@@ -15,7 +15,7 @@ static const uint8_t led_pin = 28;
 static const uint16_t motor_board_id = 0x410;
 
 #define MOTOR_MULT 0.5
-#define ALLOW_STALE_MOTORS true // if this is true it won't set stale motors to 0
+#define ALLOW_STALE_MOTORS false // if this is true it won't set stale motors to 0
 
 void board_motor_loop()
 {
@@ -39,9 +39,8 @@ void board_motor_loop()
             led_strip.update(msg);
             if (msg.id >= (motor_board_id+1) && msg.id <= (motor_board_id+NUM_PINS)) {
                 float value = can_read_float(msg) * MOTOR_MULT;
-                printf("float before clamp: %f\n", value);
-                if (value > MOTOR_MULT) value = MOTOR_MULT;
-                if (value < -MOTOR_MULT) value = -MOTOR_MULT;
+                if (value > 1.0) value = 1.0;
+                if (value < -1.0) value = -1.0;
                 int micro_seconds = throttle_to_pwm_us(value);
 
                 // NDEBUG should be added by CMAKE on release builds
@@ -55,11 +54,12 @@ void board_motor_loop()
             }
         }
 
-        #ifndef ALLOW_STALE_MOTORS
+        #if ALLOW_STALE_MOTORS == false
         for (int i = 0; i < NUM_PINS; i++) // set stale motors to 0
         {
             if (cur_time - last_updates[i] > 500)
             {
+                printf("stale motor %d\n", i);
                 pwm_write(pwm_pins[i], 1500); // write 0
                 last_updates[i] = cur_time;
             }
