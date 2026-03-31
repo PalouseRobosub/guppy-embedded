@@ -6,6 +6,18 @@
 
 #define MS_BETWEEN_HEARTBEATS 1000
 
+// RateLimit is for things that should only run so often (after a minimum delay)
+typedef struct {
+    absolute_time_t time;
+    int min_delay_ms;
+} RateLimit;
+
+// constructs a RateLimit with time=0 and min_delay_ms
+RateLimit new_rate_limit(int min_delay_ms);
+
+// returns true if it's been more than min_delay_ms since it last returned true
+bool check_rate(RateLimit *r);
+
 // set up the can bus. TODO: add parameter support? shouldn't it all be the same?
 void canbus_setup();
 
