@@ -28,6 +28,7 @@ public:
     int led_count;
     /// Number of LEDs in a row of a continuous color
     int led_group_size;
+    uint8_t brightness = 50;
     /// `pin` is the gpio pin the LED line data is connected to
     explicit LEDController(int pin, int led_count=78, int led_group_size=13); // 78 from 26*3 for guppy
     /// Updates the LED strip
@@ -47,6 +48,14 @@ private:
     void teleop();
     void disabled();
     void fault();
+    [[nodiscard]] uint32_t color_white()  const { return Adafruit_NeoPixel::Color(brightness, brightness, brightness); }
+    [[nodiscard]] uint32_t color_red()    const { return Adafruit_NeoPixel::Color(brightness, 0,          0         ); }
+    [[nodiscard]] uint32_t color_green()  const { return Adafruit_NeoPixel::Color(0,          brightness, 0         ); }
+    [[nodiscard]] uint32_t color_blue()   const { return Adafruit_NeoPixel::Color(0,          0,          brightness); }
+    [[nodiscard]] uint32_t color_yellow() const { return Adafruit_NeoPixel::Color(brightness, brightness, 0         ); }
+    [[nodiscard]] uint32_t orange()       const { return Adafruit_NeoPixel::Color(brightness, brightness / 2, 0     ); }
+    [[nodiscard]] uint32_t purple()       const { return Adafruit_NeoPixel::Color(brightness / 2, 0,      brightness); }
+    [[nodiscard]] uint32_t color_off()    const { return Adafruit_NeoPixel::Color(0,          0,          0         ); }
 };
 
 #endif //GUPPY_EMBEDDED_LED_H
