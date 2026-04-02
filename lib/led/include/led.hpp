@@ -3,6 +3,7 @@
 
 extern "C" {
     #include "pico/stdlib.h"
+    #include "guppy_lib.h"
 }
 #include "led.hpp"
 #include "Adafruit_NeoPixel.hpp"
@@ -25,9 +26,11 @@ public:
 
     State state;
     int led_count;
+    /// Number of LEDs in a row of a continuous color
+    int led_group_size;
     uint8_t brightness = 50;
     /// `pin` is the gpio pin the LED line data is connected to
-    LEDController(int pin, int led_count=78); // 78 from 26*3 for guppy
+    explicit LEDController(int pin, int led_count=78, int led_group_size=13); // 78 from 26*3 for guppy
     /// Updates the LED strip
     void tick();
     /// Updates LEDController based on the provided CAN message
@@ -36,8 +39,7 @@ public:
 private:
     int tick_count;
     Adafruit_NeoPixel led_strip;
-    absolute_time_t time_last_updated;
-    int update_rate_ms;
+    RateLimit rate_limit;
     void two_color(uint32_t color1, uint32_t color2);
     void startup();
     void holding();

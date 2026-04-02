@@ -60,11 +60,10 @@ void board_wet_loop()
 
     struct can2040_msg msg = { 0 };
 
-    int tick = 0;
+    RateLimit publish = new_rate_limit(50);
 
-    while (1)
+    while (true)
     {
-
         if (canbus_read(&msg))
         {
             led_strip.update(msg);
@@ -76,7 +75,7 @@ void board_wet_loop()
         float depth{};
         float temp{};
 
-        if (tick++ == 3) // can bus is getting full so im going to only send stuff like every 100ms
+        if (check_rate(&publish)) // can bus is getting full so im going to only send stuff like every 100ms
         {
             if (sensor.read())
             {
@@ -95,7 +94,6 @@ void board_wet_loop()
 
             canbus_transmit_int(0x022, gpio_get(SWITCH_PIN_ONE));
             canbus_transmit_int(0x023, gpio_get(SWITCH_PIN_TWO));
-
             // Barometer
             if (!sensor.isInitialized())
             {
@@ -109,10 +107,6 @@ void board_wet_loop()
                 }
             }
 
-            tick = 0;
         }
-        
-
-        sleep_ms(10);
     }
 }

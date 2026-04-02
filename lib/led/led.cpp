@@ -5,27 +5,25 @@ extern "C" {
 #include "Adafruit_NeoPixel.hpp"
 #include "led.hpp"
 
-/// Number of LEDs in a row of a continuous color
-#define LED_GROUP_SIZE 13
 
-LEDController::LEDController(int pin, int led_count) : led_strip(led_count, pin, NEO_GRB + NEO_KHZ800)
+LEDController::LEDController(int pin, int led_count, int led_group_size) : led_strip(led_count, pin, NEO_GRB + NEO_KHZ800)
 {
     tick_count = 0;
-    time_last_updated = nil_time; // TODO: hopefully this works
-    update_rate_ms = 250;
+    rate_limit = new_rate_limit(250);
     led_strip.begin();
     state = State::STARTUP;
     this->led_count = led_count;
+    this->led_group_size = led_group_size;
 }
 
 void LEDController::two_color(uint32_t color1, uint32_t color2)
 {
-    for (int i = 0; i <= led_count - LED_GROUP_SIZE*2; i += LED_GROUP_SIZE*2)
+    for (int i = 0; i <= led_count - led_group_size*2; i += led_group_size*2)
     {
-        for (int j = 0; j < LED_GROUP_SIZE; ++j) {
+        for (int j = 0; j < led_group_size; ++j) {
             led_strip.setPixelColor(i+j, color1);
         }
-        for (int j = LED_GROUP_SIZE; j < LED_GROUP_SIZE*2; ++j) {
+        for (int j = led_group_size; j < led_group_size*2; ++j) {
             led_strip.setPixelColor(i+j, color2);
         }
     }
@@ -51,12 +49,8 @@ bool LEDController::update(const can2040_msg& msg)
 
 void LEDController::tick()
 {
-    auto current_time = get_absolute_time();
-    if (absolute_time_diff_us(time_last_updated, current_time)/1000 < update_rate_ms)
-    {
+    if (!check_rate(&rate_limit))
         return;
-    }
-    time_last_updated = current_time;
 
     switch (state)
     {
