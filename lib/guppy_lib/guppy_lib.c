@@ -4,7 +4,7 @@
 #include "guppy_lib.h"
 
 RateLimit new_rate_limit(int min_delay_ms) {
-    return (RateLimit) { .time = 0, .min_delay_ms = min_delay_ms };
+    return (RateLimit) { .time = get_absolute_time(), .min_delay_ms = min_delay_ms };
 }
 
 bool check_rate(RateLimit* r)
