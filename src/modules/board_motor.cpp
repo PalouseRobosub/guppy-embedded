@@ -7,12 +7,13 @@ extern "C" {
 #include "board_motor.h"
 #include "led.hpp"
 
-// TODO: untested pin numbers
 #define NUM_PINS 8
-static const uint8_t pwm_pins[NUM_PINS] = { 16, 17, 18, 19, 20, 25, 26, 27 };
+static const uint8_t pwm_pins[NUM_PINS] = { 16, 17, 18, 20, 19, 25, 26, 27 };
 static RateLimit last_updates[NUM_PINS]{};
 static const uint8_t led_pin = 28;
 static const uint16_t motor_board_id = 0x410;
+static const uint16_t torpedo_servo_id = 0x419;
+static const uint16_t grabber_servo_id = 0x41A;
 
 #define MOTOR_MULT 0.5
 #define ALLOW_STALE_MOTORS false // if this is true it won't set stale motors to 0
@@ -51,6 +52,13 @@ void board_motor_loop()
                 const int index = msg.id - motor_board_id - 1;
                 pwm_write(pwm_pins[index], micro_seconds);
                 last_updates[index].time = cur_time;
+            }
+
+            if (msg.id == grabber_servo_id) {
+                // TODO: send pwm to grabber servo
+            }
+            if (msg.id == torpedo_servo_id) {
+                // TODO: send pwm to torpedo launch servo
             }
         }
 
