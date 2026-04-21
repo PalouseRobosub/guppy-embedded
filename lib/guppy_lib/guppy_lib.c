@@ -111,6 +111,18 @@ int canbus_transmit_int(uint32_t id, int32_t value)
     return sts;
 }
 
+// int canbus_transmit_ints(uint32_t id, int32_t value1, int32_t value2)
+// {
+//     struct can2040_msg tmsg = {
+//         .id = id,
+//         .dlc = 2*sizeof(int32_t)
+//     };
+//     memcpy(&tmsg.data32[0], &value1, sizeof(int32_t));
+//     memcpy(&tmsg.data32[1], &value2, sizeof(int32_t));
+//
+//     return can2040_transmit(&cbus, &tmsg);
+// }
+
 float can_read_float(struct can2040_msg msg) // TODO: is it possible to have a type generic for what to parse to?
 {                                            // second TODO: make this memory safe?
     float value;
@@ -127,11 +139,11 @@ int32_t can_read_int(struct can2040_msg msg)
     return value;
 }
 
-static int last_heartbeat_time = 0;
+static uint32_t last_heartbeat_time = 0;
 
 void do_heartbeat(uint32_t id)
 {
-    int cur_time = to_ms_since_boot(get_absolute_time());
+    uint32_t cur_time = to_ms_since_boot(get_absolute_time());
     
     if (cur_time - last_heartbeat_time > MS_BETWEEN_HEARTBEATS)
     {
