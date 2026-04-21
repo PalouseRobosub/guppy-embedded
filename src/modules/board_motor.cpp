@@ -8,7 +8,7 @@ extern "C" {
 #include "led.hpp"
 
 #define NUM_PINS 8
-static const uint8_t pwm_pins[NUM_PINS] = { 16, 17, 18, 20, 19, 25, 26, 27 };
+static const uint8_t pwm_pins[NUM_PINS] = { 16, 17, 18, 20, 19, 25, 26, 27 }; // motors 3 & 4 swapped in hardware
 static RateLimit last_updates[NUM_PINS]{};
 static const uint8_t led_pin = 28;
 static const uint16_t motor_board_id = 0x410;
@@ -25,7 +25,8 @@ void board_motor_loop()
         last_updates[i] = new_rate_limit(500);
     }
 
-    LEDController led_strip(led_pin);
+    size_t led_groups[6] = {21, 21, 21, 21, 21, 21};
+    LEDController<6> led_strip(led_pin, led_groups);
 
     while (true)
     {

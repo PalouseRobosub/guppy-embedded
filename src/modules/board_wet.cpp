@@ -56,7 +56,8 @@ void board_wet_loop()
     sensor.setFluidDensity(997); // kg/m^3 (freshwater) TODO: change to actual density
 
 
-    LEDController led_strip(LEDS_PIN);
+    size_t led_groups[6] = {21, 21, 20, 20, 20, 20};
+    LEDController<6> led_strip(LEDS_PIN, led_groups);
 
     struct can2040_msg msg = { 0 };
 
