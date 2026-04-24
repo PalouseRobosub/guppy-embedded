@@ -25,16 +25,6 @@ int main()
             break;
         case -1:
         default: // test
-            LEDController led_strip = LEDController(20);
-            while (true)
-            {
-                for (int i = 0; i < 2500; ++i)
-                {
-                    led_strip.tick();
-                    sleep_ms(1);
-                }
-                led_strip.state = (LEDController::State) (((int)led_strip.state + 1) % 7);
-            }
             break;
     }
 }

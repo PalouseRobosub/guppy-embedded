@@ -25,8 +25,8 @@ void board_motor_loop()
         last_updates[i] = new_rate_limit(500);
     }
 
-    size_t led_groups[6] = {21, 21, 21, 21, 21, 21};
-    LEDController<6> led_strip(led_pin, led_groups);
+    size_t led_groups[3] = {42, 42, 42};
+    LEDController<3> led_strip(led_pin, led_groups);
 
     while (true)
     {

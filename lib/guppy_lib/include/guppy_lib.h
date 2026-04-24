@@ -12,7 +12,7 @@ typedef struct {
     int min_delay_ms;
 } RateLimit;
 
-// constructs a RateLimit with time=0 and min_delay_ms
+// constructs a RateLimit with time=current-min_delay_ms and min_delay_ms
 RateLimit new_rate_limit(int min_delay_ms);
 
 // returns true if it's been more than min_delay_ms since it last returned true
