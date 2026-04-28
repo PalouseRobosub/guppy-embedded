@@ -9,13 +9,15 @@ extern "C" {
 
 #define NUM_PINS 8
 static const uint8_t pwm_pins[NUM_PINS] = { 16, 17, 18, 20, 19, 25, 26, 27 }; // motors 3 & 4 swapped in hardware
+// static const uint8_t claw_servo_pin = 29;
+// static const uint8_t torpedo_servo_pin = 30;
 static RateLimit last_updates[NUM_PINS]{};
 static const uint8_t led_pin = 28;
 static const uint16_t motor_board_id = 0x410;
 static const uint16_t torpedo_servo_id = 0x419;
-static const uint16_t grabber_servo_id = 0x41A;
+static const uint16_t claw_servo_id = 0x41A;
 
-#define MOTOR_MULT 0.5
+#define MOTOR_MULT 1.0
 #define ALLOW_STALE_MOTORS false // if this is true it won't set stale motors to 0
 
 void board_motor_loop()
@@ -24,6 +26,8 @@ void board_motor_loop()
         add_pwm_pin(pwm_pins[i]);
         last_updates[i] = new_rate_limit(500);
     }
+    // add_pwm_pin(claw_servo_pin);
+    // add_pwm_pin(torpedo_servo_pin);
 
     size_t led_groups[3] = {42, 42, 42};
     LEDController<3> led_strip(led_pin, led_groups);
@@ -55,12 +59,13 @@ void board_motor_loop()
                 last_updates[index].time = cur_time;
             }
 
-            if (msg.id == grabber_servo_id) {
-                // TODO: send pwm to grabber servo
-            }
-            if (msg.id == torpedo_servo_id) {
-                // TODO: send pwm to torpedo launch servo
-            }
+            // TODO: test servo functionality, it may be different than motor throttle
+            // if (msg.id == claw_servo_id) {
+            //     pwm_write(claw_servo_pin, throttle_to_pwm_us(can_read_float(msg)));
+            // }
+            // if (msg.id == torpedo_servo_id) {
+            //     pwm_write(torpedo_servo_pin, throttle_to_pwm_us(can_read_float(msg)));
+            // }
         }
 
         #if ALLOW_STALE_MOTORS == false

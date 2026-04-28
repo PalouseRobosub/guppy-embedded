@@ -153,7 +153,12 @@ void LEDController<LED_GROUP_COUNT>::startup()
     for (int i = 0; i < LED_GROUP_COUNT; i++)
     {
         for (int j = 0; j < led_groups[i]; ++j) {
-            size_t center = tick_count % led_groups[i];
+            size_t n = led_groups[i];
+            // creates patterns like 1 2 3 4 3 2 1 2 3 4 3 ...
+            size_t center = tick_count % (2*n - 2) + 1;
+            if (center > n) center = 2*n - center;
+            center -= 1; // convert from 1..=n to  0..n
+
             size_t dot_radius = 2;
             if (j - center < dot_radius || center - j < dot_radius)
                 led_strip.setPixelColor(led_index+j, this->color_white());
