@@ -33,7 +33,7 @@ void board_motor_loop()
     // add_pwm_pin(torpedo_servo_pin);
     gpio_init(estop_pin);
     gpio_set_dir(estop_pin, GPIO_IN);
-    gpio_pull_down(estop_pin);
+    gpio_pull_up(estop_pin);
     RateLimit estop_rate_limit = new_rate_limit(20);
     bool estop_triggered = true;
 
@@ -92,7 +92,7 @@ void board_motor_loop()
         // E-Stop & state-based motor shutoff
         if (check_rate(&estop_rate_limit))
         {
-            estop_triggered = !gpio_get(estop_pin); // estop triggered by disconnecting the switch
+            estop_triggered = gpio_get(estop_pin); // estop triggered by disconnecting the switch
             canbus_transmit_int(estop_triggered_id, estop_triggered);
 
             if (estop_triggered || !allowed_to_motor(led_strip.state))
