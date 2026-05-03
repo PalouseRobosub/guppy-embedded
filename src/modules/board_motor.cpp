@@ -9,13 +9,16 @@ extern "C" {
 
 #define NUM_PINS 8
 static const uint8_t pwm_pins[NUM_PINS] = { 16, 17, 18, 20, 19, 25, 26, 27 }; // motors 3 & 4 swapped in hardware
-// static const uint8_t claw_servo_pin = 29;
-// static const uint8_t torpedo_servo_pin = 30;
 static RateLimit last_updates[NUM_PINS]{};
-static const uint8_t led_pin = 28;
-static const uint16_t motor_board_id = 0x410;
-static const uint16_t torpedo_servo_id = 0x419;
-static const uint16_t claw_servo_id = 0x41A;
+
+constexpr uint8_t estop_pin = 29;
+constexpr uint8_t led_pin = 28;
+
+constexpr uint16_t motor_board_heartbeat_id = 0x010;
+constexpr uint16_t motor_board_id = 0x410;
+constexpr uint16_t estop_triggered_id = 0x01B;
+// constexpr uint16_t torpedo_servo_id = 0x019;
+// constexpr uint16_t claw_servo_id = 0x01A;
 
 #define MOTOR_MULT 1.0
 #define ALLOW_STALE_MOTORS false // if this is true it won't set stale motors to 0
@@ -28,13 +31,19 @@ void board_motor_loop()
     }
     // add_pwm_pin(claw_servo_pin);
     // add_pwm_pin(torpedo_servo_pin);
+    gpio_init(estop_pin);
+    gpio_set_dir(estop_pin, GPIO_IN);
+    gpio_pull_down(estop_pin);
+    RateLimit estop_rate_limit = new_rate_limit(20);
+    bool estop_triggered = true;
 
-    size_t led_groups[3] = {42, 42, 42};
-    LEDController<3> led_strip(led_pin, led_groups);
+    constexpr int strip_count = 3;
+    size_t led_groups[strip_count] = {42, 42, 42};
+    LEDController<strip_count> led_strip(led_pin, led_groups);
 
     while (true)
     {
-        do_heartbeat(0x010);
+        do_heartbeat(motor_board_heartbeat_id);
         led_strip.tick();
 
         const absolute_time_t cur_time = get_absolute_time();
@@ -55,7 +64,8 @@ void board_motor_loop()
                 printf("recieved float: %f\n\n", value);
 
                 const int index = msg.id - motor_board_id - 1;
-                pwm_write(pwm_pins[index], micro_seconds);
+                if (!estop_triggered && allowed_to_motor(led_strip.state))
+                    pwm_write(pwm_pins[index], micro_seconds);
                 last_updates[index].time = cur_time;
             }
 
@@ -78,5 +88,21 @@ void board_motor_loop()
             }
         }
         #endif
+
+        // E-Stop & state-based motor shutoff
+        if (check_rate(&estop_rate_limit))
+        {
+            estop_triggered = !gpio_get(estop_pin); // estop triggered by disconnecting the switch
+            canbus_transmit_int(estop_triggered_id, estop_triggered);
+
+            if (estop_triggered || !allowed_to_motor(led_strip.state))
+            {
+                for (int i = 0; i < NUM_PINS; i++)
+                {
+                    // printf("disable motor %d\n", i);
+                    pwm_write(pwm_pins[i], throttle_to_pwm_us(0.0));
+                }
+            }
+        }
     }
 }

@@ -3,6 +3,14 @@
 
 #include "guppy_lib.h"
 
+bool allowed_to_motor(State state)
+{
+    return state == HOLDING
+           || state == NAV
+           || state == TASK
+           || state == TELEOP;
+}
+
 RateLimit new_rate_limit(int min_delay_ms) {
     return (RateLimit) { .time = get_absolute_time() - min_delay_ms*1000, .min_delay_ms = min_delay_ms };
 }
