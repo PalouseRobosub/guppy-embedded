@@ -5,7 +5,6 @@ extern "C" {
     #include "guppy_lib.h"
     #include "can2040.h"
 }
-#include "led.hpp"
 #include "Adafruit_NeoPixel.hpp"
 
 #define BRIGHTNESS 50 // brightness of pixels out of 255
@@ -15,16 +14,6 @@ template <size_t LED_GROUP_COUNT>
 class LEDController
 {
 public:
-    enum class State {
-        STARTUP = 0,
-        HOLDING = 1,
-        NAV = 2,
-        TASK = 3,
-        TELEOP = 4,
-        DISABLED = 5,
-        FAULT = 6
-    };
-
     State state;
     /// Groups of LEDs in a row of a continuous color
     size_t led_groups[LED_GROUP_COUNT];
