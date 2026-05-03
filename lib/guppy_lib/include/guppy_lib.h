@@ -18,6 +18,20 @@ RateLimit new_rate_limit(int min_delay_ms);
 // returns true if it's been more than min_delay_ms since it last returned true
 bool check_rate(RateLimit *r);
 
+// SyncedTimer is very similar to RateLimit, but uses fixed time frames of
+// length delay_ms instead of resetting the delay each time
+typedef struct {
+    absolute_time_t initial_time;
+    int delay_ms;
+    int last_check_time; // in multiples of delay_ms
+} SyncedTimer;
+
+// constructs a SyncedTimer with initial_time=current time and delay_ms set to delay_ms
+SyncedTimer new_synced_timer(int delay_ms);
+
+// returns true if another multiple of delay_ms has passed since it last returned true
+bool check_timer(SyncedTimer* timer);
+
 // set up the can bus. TODO: add parameter support? shouldn't it all be the same?
 void canbus_setup();
 

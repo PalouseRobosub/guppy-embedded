@@ -17,6 +17,21 @@ bool check_rate(RateLimit* r)
     return false;
 }
 
+SyncedTimer new_synced_timer(int delay_ms) {
+    return (SyncedTimer) { .initial_time = get_absolute_time(), .delay_ms = delay_ms, .last_check_time = 0 };
+}
+
+bool check_timer(SyncedTimer* timer)
+{
+    absolute_time_t current_time = get_absolute_time();
+    int current_check_time = to_ms_since_boot(timer->initial_time) / timer->delay_ms;
+    if (current_check_time > timer->last_check_time) {
+        timer->last_check_time = current_check_time;
+        return true;
+    }
+    return false;
+}
+
 /* ---------------CAN stuff--------------- */
 
 // Simple example of irq safe queue (this is not multi-core safe)

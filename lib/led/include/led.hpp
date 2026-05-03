@@ -40,7 +40,7 @@ public:
 private:
     int tick_count;
     Adafruit_NeoPixel led_strip;
-    RateLimit rate_limit;
+    SyncedTimer timer;
     void two_color(uint32_t color1, uint32_t color2);
     void startup();
     void holding();
@@ -74,7 +74,7 @@ LEDController<LED_GROUP_COUNT>::LEDController(int pin, const size_t groups[LED_G
     //for (int i = 0; i < 122; i++) led_strip.setPixelColor(i, this->color_green());
 
     tick_count = 0;
-    rate_limit = new_rate_limit(250);
+    timer = new_synced_timer(250);
     state = State::STARTUP;
 }
 
@@ -104,9 +104,9 @@ bool LEDController<LED_GROUP_COUNT>::update(const can2040_msg& msg)
             switch (new_state)
             {
             case State::STARTUP:
-                rate_limit = new_rate_limit(10);
+                timer = new_synced_timer(10);
             default:
-                rate_limit = new_rate_limit(250);
+                timer = new_synced_timer(250);
             }
             tick_count = 0;
             state = new_state;
@@ -127,7 +127,7 @@ bool LEDController<LED_GROUP_COUNT>::update(const can2040_msg& msg)
 template <size_t LED_GROUP_COUNT>
 void LEDController<LED_GROUP_COUNT>::tick()
 {
-    if (!check_rate(&rate_limit))
+    if (!check_timer(&timer))
         return;
 
     switch (state)
