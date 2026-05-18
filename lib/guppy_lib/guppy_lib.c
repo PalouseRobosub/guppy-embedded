@@ -31,7 +31,9 @@ SyncedTimer new_synced_timer(int delay_ms) {
 
 bool check_timer(SyncedTimer* timer)
 {
-    int current_check_time = to_ms_since_boot(get_absolute_time()) / timer->delay_ms;
+    uint32_t current_time_ms = to_ms_since_boot(get_absolute_time());
+    uint32_t start_time_ms = to_ms_since_boot(timer->initial_time);
+    int current_check_time = (current_time_ms - start_time_ms) / timer->delay_ms;
     if (current_check_time > timer->last_check_time) {
         timer->last_check_time = current_check_time;
         return true;
